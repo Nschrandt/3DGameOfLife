@@ -1,4 +1,4 @@
-package sample;
+package CS351;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

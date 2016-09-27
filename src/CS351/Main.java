@@ -12,15 +12,18 @@ to a random color.
 
 package CS351;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Main extends Application{
 
     final Group root = new Group();
     final Xform world = new Xform();
@@ -28,7 +31,8 @@ public class Main extends Application {
     final Xform cameraXform = new Xform();
     final Xform cameraXform2 = new Xform();
     final Xform cameraXform3 = new Xform();
-    final Controller handler = new Controller();
+    final Controller handler = new Controller(this);
+    final GUI gui = new GUI(handler);
 
     private static final double CAMERA_INITIAL_DISTANCE = -450;
     private static final double CAMERA_INITIAL_X_ANGLE = 50.0;
@@ -47,8 +51,11 @@ public class Main extends Application {
     double mouseDeltaX;
     double mouseDeltaY;
 
+    private Stage primaryStage;
     private Cell[][][] cellGrid = new Cell[32][32][32];
     private Xform cellXform;
+    private ArrayList<Cell> livingCells = new ArrayList();
+    private Random random = new Random();
     private final double cellWidth = 2.0;
     private final double cellHeight = 2.0;
     private final double cellDepth = 2.0;
@@ -120,39 +127,6 @@ public class Main extends Application {
         }); // setOnMouseDragged
     } //handleMouse
 
-    /*
- * Copyright (c) 2013, 2014 Oracle and/or its affiliates.
- * All rights reserved. Use is subject to license terms.
- *
- * This file is available and licensed under the following license:
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *  - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *  - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-
     private void buildCell()
     {
         cellXform = new Xform();
@@ -162,11 +136,15 @@ public class Main extends Application {
             {
                 for(int k = 1; k < 31; k++)
                 {
-                    Box newBox = new Box(cellWidth,cellHeight,cellDepth);
+                    Cell newCell = new Cell(i,j,k, cellGrid);
+                    cellGrid[i][j][k] = newCell;
+                    newCell.createBox(cellWidth,cellHeight,cellDepth);
                     Xform newXform = new Xform();
-                    newXform.getChildren().add(newBox);
-                    newXform.setTranslate(i*cellWidth-(15*cellWidth), j*cellHeight-(15*cellHeight),
-                            k*cellDepth-(15*cellDepth));
+                    if(random.nextInt(100) > 85) {
+                        newXform.getChildren().add(newCell.getBox());
+                        newXform.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
+                                k * cellDepth - (15 * cellDepth));
+                    }
                     cellXform.getChildren().add(newXform);
                 }
             }
@@ -174,13 +152,12 @@ public class Main extends Application {
         world.getChildren().add(cellXform);
     }
 
-    /*
-    This is the method provided by the tutorial that overrides the start function.
-    It is almost identical expect that I have added the two PointLight nodes
-    and set their initial values.
-     */
-    @Override
-    public void start(Stage primaryStage) throws Exception
+    private void buildTestCell()
+    {
+
+    }
+
+    public void startSimulation()
     {
         root.getChildren().add(world);
         root.setDepthTest(DepthTest.ENABLE);
@@ -197,6 +174,20 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         scene.setCamera(camera);
+    }
+
+    public GUI getGUI()
+    {
+        return gui;
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception
+    {
+        this.primaryStage = primaryStage;
+        Scene startScene = gui.createStartScene(root);
+        primaryStage.setScene(startScene);
+        primaryStage.show();
     }
 
 

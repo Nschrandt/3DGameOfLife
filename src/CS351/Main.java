@@ -12,7 +12,6 @@ to a random color.
 
 package CS351;
 
-import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.*;
@@ -33,6 +32,7 @@ public class Main extends Application{
     final Xform cameraXform3 = new Xform();
     final Controller handler = new Controller(this);
     final GUI gui = new GUI(handler);
+    final SimulationTimer timer = new SimulationTimer();
 
     private static final double CAMERA_INITIAL_DISTANCE = -450;
     private static final double CAMERA_INITIAL_X_ANGLE = 50.0;
@@ -140,7 +140,7 @@ public class Main extends Application{
                     cellGrid[i][j][k] = newCell;
                     newCell.createBox(cellWidth,cellHeight,cellDepth);
                     Xform newXform = new Xform();
-                    if(random.nextInt(100) > 85) {
+                    if(random.nextInt(100) > 95) {
                         newXform.getChildren().add(newCell.getBox());
                         newXform.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
@@ -150,11 +150,6 @@ public class Main extends Application{
             }
         }
         world.getChildren().add(cellXform);
-    }
-
-    private void buildTestCell()
-    {
-
     }
 
     public void startSimulation()
@@ -174,6 +169,7 @@ public class Main extends Application{
         primaryStage.setScene(scene);
         primaryStage.show();
         scene.setCamera(camera);
+        timer.start();
     }
 
     public GUI getGUI()

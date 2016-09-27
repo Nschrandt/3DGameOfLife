@@ -18,7 +18,6 @@ import javafx.scene.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.Sphere;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -32,7 +31,7 @@ public class Main extends Application {
     final Controller handler = new Controller();
 
     private static final double CAMERA_INITIAL_DISTANCE = -450;
-    private static final double CAMERA_INITIAL_X_ANGLE = 70.0;
+    private static final double CAMERA_INITIAL_X_ANGLE = 50.0;
     private static final double CAMERA_INITIAL_Y_ANGLE = 320.0;
     private static final double CAMERA_NEAR_CLIP = 0.1;
     private static final double CAMERA_FAR_CLIP = 10000.0;
@@ -50,6 +49,10 @@ public class Main extends Application {
 
     private Cell[][][] cellGrid = new Cell[32][32][32];
     private Xform cellXform;
+    private final double cellWidth = 2.0;
+    private final double cellHeight = 2.0;
+    private final double cellDepth = 2.0;
+
 
     /*
     Method provided by the tutorial to build the camera node.
@@ -153,14 +156,22 @@ public class Main extends Application {
     private void buildCell()
     {
         cellXform = new Xform();
-        Box testBox = new Box(20,20,20);
-        Box testBox2 = new Box(30,30,30);
-        Sphere sphere = new Sphere(18);
-        cellXform.getChildren().add(testBox2);
-        cellXform.getChildren().add(sphere);
-        cellXform.getChildren().add(testBox);
+        for(int i = 1; i < 31; i++)
+        {
+            for(int j = 1; j < 31; j++)
+            {
+                for(int k = 1; k < 31; k++)
+                {
+                    Box newBox = new Box(cellWidth,cellHeight,cellDepth);
+                    Xform newXform = new Xform();
+                    newXform.getChildren().add(newBox);
+                    newXform.setTranslate(i*cellWidth-(15*cellWidth), j*cellHeight-(15*cellHeight),
+                            k*cellDepth-(15*cellDepth));
+                    cellXform.getChildren().add(newXform);
+                }
+            }
+        }
         world.getChildren().add(cellXform);
-
     }
 
     /*

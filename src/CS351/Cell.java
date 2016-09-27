@@ -12,6 +12,7 @@ public class Cell {
     private int xPosition;
     private int yPosition;
     private int zPosition;
+    private boolean isAlive;
 
     public Cell(int x, int y, int z, Cell[][][] cellGrid)
     {
@@ -19,6 +20,11 @@ public class Cell {
         yPosition = y;
         zPosition = z;
         grid = cellGrid;
+    }
+
+    public void setAlive(boolean life)
+    {
+        isAlive = life;
     }
 
     public void createBox(double boxWidth, double boxHeight, double boxDepth)

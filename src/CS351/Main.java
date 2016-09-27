@@ -12,6 +12,7 @@ to a random color.
 
 package CS351;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.*;
@@ -54,12 +55,12 @@ public class Main extends Application{
     private Stage primaryStage;
     private Cell[][][] cellGrid = new Cell[32][32][32];
     private Xform cellXform;
-    private ArrayList<Cell> livingCells = new ArrayList();
     private Random random = new Random();
     private final double cellWidth = 2.0;
     private final double cellHeight = 2.0;
     private final double cellDepth = 2.0;
 
+    protected ArrayList<Cell> livingCells = new ArrayList();
 
     /*
     Method provided by the tutorial to build the camera node.
@@ -141,6 +142,8 @@ public class Main extends Application{
                     newCell.createBox(cellWidth,cellHeight,cellDepth);
                     Xform newXform = new Xform();
                     if(random.nextInt(100) > 95) {
+                        newCell.setAlive(true);
+                        livingCells.add(newCell);
                         newXform.getChildren().add(newCell.getBox());
                         newXform.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
@@ -175,6 +178,13 @@ public class Main extends Application{
     public GUI getGUI()
     {
         return gui;
+    }
+
+    class SimulationTimer extends AnimationTimer{
+        @Override
+        public void handle(long now) {
+
+        }
     }
 
     @Override

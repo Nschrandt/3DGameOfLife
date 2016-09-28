@@ -96,7 +96,7 @@ public class GUI
 
     private Slider createSlider()
     {
-        Slider newSlider = new Slider(1,5,1);
+        Slider newSlider = new Slider(1,10,1);
         newSlider.setMajorTickUnit(1);
         newSlider.setMinorTickCount(0);
         newSlider.setSnapToTicks(true);

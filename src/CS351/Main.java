@@ -35,7 +35,7 @@ public class Main extends Application{
     final GUI gui = new GUI(handler);
     final SimulationTimer timer = new SimulationTimer();
 
-    private static final double CAMERA_INITIAL_DISTANCE = -450;
+    private static final double CAMERA_INITIAL_DISTANCE = -150;
     private static final double CAMERA_INITIAL_X_ANGLE = 50.0;
     private static final double CAMERA_INITIAL_Y_ANGLE = 320.0;
     private static final double CAMERA_NEAR_CLIP = 0.1;
@@ -55,12 +55,12 @@ public class Main extends Application{
     private Stage primaryStage;
     private Cell[][][] cellGrid = new Cell[32][32][32];
     private Xform cellXform;
+    private long time;
     private Random random = new Random();
-    private final double cellWidth = 2.0;
-    private final double cellHeight = 2.0;
-    private final double cellDepth = 2.0;
-
-    protected ArrayList<Cell> livingCells = new ArrayList();
+    private final double cellWidth = 1.0;
+    private final double cellHeight = 1.0;
+    private final double cellDepth = 1.0;
+    private ArrayList<Cell> livingCells = new ArrayList();
 
     /*
     Method provided by the tutorial to build the camera node.
@@ -172,19 +172,13 @@ public class Main extends Application{
         primaryStage.setScene(scene);
         primaryStage.show();
         scene.setCamera(camera);
+        time = System.nanoTime();
         timer.start();
     }
 
     public GUI getGUI()
     {
         return gui;
-    }
-
-    class SimulationTimer extends AnimationTimer{
-        @Override
-        public void handle(long now) {
-
-        }
     }
 
     @Override
@@ -200,5 +194,29 @@ public class Main extends Application{
     public static void main(String[] args)
     {
         launch(args);
+    }
+
+    class SimulationTimer extends AnimationTimer{
+        @Override
+        public void handle(long now) {
+            if(now - time > 1_000_000_000)
+            {
+                for(int i = 1; i<31; i++)
+                {
+                    for(int j = 1; j<31; j++)
+                    {
+                        for(int k = 1; k<31; k++)
+                        {
+                            Cell currentCell = cellGrid[i][j][k];
+                            if(currentCell.isAlive() && currentCell.checkSurroundings() > 5)
+                            {
+
+                            }
+                        }
+                    }
+                }
+                time = System.nanoTime();
+            }
+        }
     }
 }

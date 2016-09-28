@@ -27,6 +27,11 @@ public class Cell {
         isAlive = life;
     }
 
+    public boolean isAlive()
+    {
+        return isAlive;
+    }
+
     public void createBox(double boxWidth, double boxHeight, double boxDepth)
     {
         cellBox = new Box(boxWidth,boxHeight,boxDepth);

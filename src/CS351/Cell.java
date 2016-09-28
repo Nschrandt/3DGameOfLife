@@ -5,7 +5,7 @@ import javafx.scene.shape.Box;
 /**
  * Created by nick on 9/25/16.
  */
-public class Cell {
+public class Cell extends Xform{
 
     private Box cellBox;
     private Cell[][][] grid;
@@ -51,7 +51,7 @@ public class Cell {
             {
                 for(int k = zPosition-1; k<zPosition+2; k++)
                 {
-                    if(grid[i][j][k] != null)
+                    if(grid[i][j][k] != null && grid[i][j][k].isAlive)
                     {
                         neighbors++;
                     }

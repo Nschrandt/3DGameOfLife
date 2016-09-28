@@ -60,7 +60,7 @@ public class Main extends Application{
     private final double cellWidth = 1.0;
     private final double cellHeight = 1.0;
     private final double cellDepth = 1.0;
-    private ArrayList<Cell> livingCells = new ArrayList();
+    private ArrayList<Xform> livingCells = new ArrayList();
 
     /*
     Method provided by the tutorial to build the camera node.
@@ -140,15 +140,15 @@ public class Main extends Application{
                     Cell newCell = new Cell(i,j,k, cellGrid);
                     cellGrid[i][j][k] = newCell;
                     newCell.createBox(cellWidth,cellHeight,cellDepth);
-                    Xform newXform = new Xform();
-                    if(random.nextInt(100) > 95) {
+                    //Xform newXform = new Xform();
+                    if(random.nextInt(100) > 90) {
                         newCell.setAlive(true);
                         livingCells.add(newCell);
-                        newXform.getChildren().add(newCell.getBox());
-                        newXform.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
+                        newCell.getChildren().add(newCell.getBox());
+                        newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
                     }
-                    cellXform.getChildren().add(newXform);
+                    cellXform.getChildren().add(newCell);
                 }
             }
         }
@@ -208,9 +208,16 @@ public class Main extends Application{
                         for(int k = 1; k<31; k++)
                         {
                             Cell currentCell = cellGrid[i][j][k];
-                            if(currentCell.isAlive() && currentCell.checkSurroundings() > 5)
+                            int neighbors = currentCell.checkSurroundings();
+                            if(currentCell.isAlive() && (neighbors > 6 || neighbors < 2))
                             {
-
+                                currentCell.getChildren().remove(currentCell.getBox());
+                                currentCell.setAlive(false);
+                            }
+                            else if(!currentCell.isAlive() && (neighbors >= 2 && neighbors <= 6 ))
+                            {
+                                currentCell.getChildren().add(currentCell.getBox());
+                                currentCell.setAlive(true);
                             }
                         }
                     }

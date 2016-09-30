@@ -6,9 +6,8 @@ package CS351;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.*;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.stage.Stage;
@@ -24,26 +23,16 @@ public class Main extends Application{
     final Xform cameraXform = new Xform();
     final Xform cameraXform2 = new Xform();
     final Xform cameraXform3 = new Xform();
-    final Controller handler = new Controller(this);
-    final GUI gui = new GUI(handler);
+    final GUI gui = new GUI(this);
     final SimulationTimer timer = new SimulationTimer();
+    final KeyboardController keyboard = new KeyboardController(this);
 
     private static final double CAMERA_INITIAL_DISTANCE = -150;
     private static final double CAMERA_INITIAL_X_ANGLE = 50.0;
     private static final double CAMERA_INITIAL_Y_ANGLE = 320.0;
     private static final double CAMERA_NEAR_CLIP = 0.1;
     private static final double CAMERA_FAR_CLIP = 10000.0;
-    private static final double CONTROL_MULTIPLIER = 0.1;
-    private static final double SHIFT_MULTIPLIER = 10.0;
     private static final double ROTATION_SPEED = 2.0;
-    private static final double MOUSE_SPEED = 0.1;
-    private static final double TRACK_SPEED = 0.3;
-    double mousePosX;
-    double mousePosY;
-    double mouseOldX;
-    double mouseOldY;
-    double mouseDeltaX;
-    double mouseDeltaY;
 
     private double deathPopLow;
     private double deathPopHigh;
@@ -79,73 +68,20 @@ public class Main extends Application{
         cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
     }
 
-    private void handleMouse(Scene scene, final Node root) {
-
-        scene.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent me) {
-                mousePosX = me.getSceneX();
-                mousePosY = me.getSceneY();
-                mouseOldX = me.getSceneX();
-                mouseOldY = me.getSceneY();
-            }
-        });
-        scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent me) {
-                mouseOldX = mousePosX;
-                mouseOldY = mousePosY;
-                mousePosX = me.getSceneX();
-                mousePosY = me.getSceneY();
-                mouseDeltaX = (mousePosX - mouseOldX);
-                mouseDeltaY = (mousePosY - mouseOldY);
-
-                double modifier = 1.0;
-
-                if (me.isControlDown()) {
-                    modifier = CONTROL_MULTIPLIER;
-                }
-                if (me.isShiftDown()) {
-                    modifier = SHIFT_MULTIPLIER;
-                }
-                if (me.isPrimaryButtonDown()) {
-                    cameraXform.ry.setAngle(cameraXform.ry.getAngle() -
-                            mouseDeltaX*modifier*ROTATION_SPEED);
-                    cameraXform.rx.setAngle(cameraXform.rx.getAngle() +
-                            mouseDeltaY*modifier*ROTATION_SPEED);
-                }
-                else if (me.isSecondaryButtonDown()) {
-                    double z = camera.getTranslateZ();
-                    double newZ = z + mouseDeltaX*MOUSE_SPEED*modifier;
-                    camera.setTranslateZ(newZ);
-                }
-                else if (me.isMiddleButtonDown()) {
-                    cameraXform2.t.setX(cameraXform2.t.getX() +
-                            mouseDeltaX*MOUSE_SPEED*modifier*TRACK_SPEED);  // -
-                    cameraXform2.t.setY(cameraXform2.t.getY() +
-                            mouseDeltaY*MOUSE_SPEED*modifier*TRACK_SPEED);  // -
-                }
-            }
-        }); // setOnMouseDragged
-    } //handleMouse
-
-    private void buildCell()
+    private void buildRandomGrid()
     {
-        PhongMaterial redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(Color.RED);
-        redMaterial.setSpecularColor(Color.DARKRED);
-        cellXform = new Xform();
         for(int i = 1; i < 31; i++)
         {
             for(int j = 1; j < 31; j++)
             {
                 for(int k = 1; k < 31; k++)
                 {
-                    if(random.nextInt(100) > 98){
+                    if(random.nextInt(100) > 96){
                         Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                         cellGrid[i][j][k] = newCell;
                         newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
                         cellXform.getChildren().add(newCell);
-                        //System.out.println(i + " " + j + " " + k + " " + ": " + newCell.checkSurroundings());
                     }
                 }
             }
@@ -153,29 +89,57 @@ public class Main extends Application{
         world.getChildren().add(cellXform);
     }
 
-    private void setRValues()
+    private void buildPreset1()
     {
-        deathPopLow = gui.getR1();
-        deathPopHigh = gui.getR2();
-        lifePopLow = gui.getR3();
-        lifePopHigh = gui.getR4();
+        for(int i = 1; i < 31; i++)
+        {
+            for(int j = 1; j < 31; j++)
+            {
+                Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                cellGrid[31][i][j] = newCell;
+                newCell.setTranslate(31 * cellWidth - (15 * cellWidth), i * cellHeight - (15 * cellHeight),
+                        j * cellDepth - (15 * cellDepth));
+                cellXform.getChildren().add(newCell);
+            }
+        }
     }
 
-    public void startSimulation()
+    private void setRValues()
+    {
+        deathPopLow = gui.getLowPopDeath();
+        deathPopHigh = gui.getHighPopDeath();
+        lifePopLow = gui.getLowPopLife();
+        lifePopHigh = gui.getHighPopLife();
+    }
+
+    public void startSimulation(int selection)
     {
         root.getChildren().add(world);
         root.setDepthTest(DepthTest.ENABLE);
+        cellXform = new Xform();
         buildCamera();
-        setRValues();
-        buildCell();
-
+        switch (selection)
+        {
+            case 1:
+                setRValues();
+                buildRandomGrid();
+                //buildPreset1();
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+        }
         Scene scene = new Scene(root, 1024, 768, true);
         scene.setFill(Color.BLACK);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, (keyboard));
 
-        handleMouse(scene, world);
-        //handleKeyboard(scene, world);
-
-        primaryStage.setTitle("Molecule Sample Application");
         primaryStage.setScene(scene);
         primaryStage.show();
         scene.setCamera(camera);
@@ -183,25 +147,21 @@ public class Main extends Application{
         timer.start();
     }
 
-    public GUI getGUI()
+    public void zoom(int direction)
     {
-        return gui;
+        timer.zoomCamera(direction);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception
     {
         this.primaryStage = primaryStage;
-        Scene startScene = gui.createStartScene(root);
+        primaryStage.setTitle("Molecule Sample Application");
+        Scene startScene = gui.createStartScene();
         primaryStage.setScene(startScene);
         primaryStage.show();
     }
 
-
-    public static void main(String[] args)
-    {
-        launch(args);
-    }
 
     class SimulationTimer extends AnimationTimer{
         @Override
@@ -223,6 +183,22 @@ public class Main extends Application{
                     modifier*ROTATION_SPEED);
             cameraXform.rx.setAngle(cameraXform.rx.getAngle() +
                     modifier*ROTATION_SPEED);
+        }
+
+        private void zoomCamera(int direction)
+        {
+            if(direction > 0 && camera.getTranslateZ() < -30)
+            {
+                double z = camera.getTranslateZ();
+                double newZ = z + direction;
+                camera.setTranslateZ(newZ);
+            }
+            if(direction < 0 && camera.getTranslateZ() > -250)
+            {
+                double z = camera.getTranslateZ();
+                double newZ = z + direction;
+                camera.setTranslateZ(newZ);
+            }
         }
 
         private Xform updateGrid()
@@ -316,30 +292,10 @@ public class Main extends Application{
             }
             return neighbors;
         }
+    }
 
-//        private void updateGrid(PhongMaterial greenMaterial) {
-//            for(int i = 1; i<31; i++)
-//            {
-//                for(int j = 1; j<31; j++)
-//                {
-//                    for(int k = 1; k<31; k++)
-//                    {
-//                        Cell currentCell = cellGrid[i][j][k];
-//                        int neighbors = currentCell.checkSurroundings(i, j , k);
-//                        if(currentCell.isAlive() && (neighbors > deathPopHigh || neighbors < deathPopLow))
-//                        {
-//                            currentCell.getChildren().remove(currentCell.getBox());
-//                            currentCell.setAlive(false);
-//                        }
-//                        else if(!currentCell.isAlive() && (neighbors >= lifePopLow && neighbors <= lifePopHigh))
-//                        {
-//                            currentCell.getBox().setMaterial(greenMaterial);
-//                            currentCell.getChildren().add(currentCell.getBox());
-//                            currentCell.setAlive(true);
-//                        }
-//                    }
-//                }
-//            }
-//        }
+    public static void main(String[] args)
+    {
+        launch(args);
     }
 }

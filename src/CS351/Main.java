@@ -139,19 +139,16 @@ public class Main extends Application{
             {
                 for(int k = 1; k < 31; k++)
                 {
-                    Cell newCell = new Cell(i,j,k, cellGrid);
-                    cellGrid[i][j][k] = newCell;
-                    newCell.createBox(cellWidth,cellHeight,cellDepth);
-                    //Xform newXform = new Xform();
-                    if(random.nextInt(100) > 95) {
+                    if(random.nextInt(100) > 90){
+                        Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                        cellGrid[i][j][k] = newCell;
                         newCell.setAlive(true);
                         newCell.getBox().setMaterial(redMaterial);
-                        newCell.getChildren().add(newCell.getBox());
                         newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
+                        cellXform.getChildren().add(newCell);
                         //System.out.println(i + " " + j + " " + k + " " + ": " + newCell.checkSurroundings());
                     }
-                    cellXform.getChildren().add(newCell);
                 }
             }
         }
@@ -211,12 +208,11 @@ public class Main extends Application{
     class SimulationTimer extends AnimationTimer{
         @Override
         public void handle(long now) {
-            PhongMaterial greenMaterial = new PhongMaterial();
-            greenMaterial.setDiffuseColor(Color.GREEN);
-            greenMaterial.setSpecularColor(Color.DARKGREEN);
             if(now - time > 1_000_000_000)
             {
-                updateGrid(greenMaterial);
+                world.getChildren().remove(cellXform);
+                cellXform = updateGrid();
+                world.getChildren().add(cellXform);
                 time = System.nanoTime();
             }
 
@@ -229,29 +225,88 @@ public class Main extends Application{
                     modifier*ROTATION_SPEED);
         }
 
-        private void updateGrid(PhongMaterial greenMaterial) {
+        private Xform updateGrid()
+        {
+            PhongMaterial greenMaterial = new PhongMaterial();
+            greenMaterial.setDiffuseColor(Color.GREEN);
+            greenMaterial.setSpecularColor(Color.DARKGREEN);
+            Xform newCellXForm = new Xform();
+            Cell[][][] newCellGrid = new Cell[32][32][32];
             for(int i = 1; i<31; i++)
             {
-                for(int j = 1; j<31; j++)
+                for(int j = 1; j < 31; j++)
                 {
-                    for(int k = 1; k<31; k++)
+                    for(int k = 1; k < 31; k++)
                     {
-                        Cell currentCell = cellGrid[i][j][k];
-                        int neighbors = currentCell.checkSurroundings(i, j , k);
-                        if(currentCell.isAlive() && (neighbors > deathPopHigh || neighbors < deathPopLow))
+                       int neighbors = checkSurroundings(i,j,k);
+                       if(cellGrid[i][j][k] == null && neighbors <= lifePopHigh && neighbors >= lifePopLow)
+                       {
+                           Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                           newCellGrid[i][j][k] = newCell;
+                           newCell.getBox().setMaterial(greenMaterial);
+                           newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
+                                   k * cellDepth - (15 * cellDepth));
+                           newCellXForm.getChildren().add(newCell);
+                       }
+                       else if(cellGrid[i][j][k] != null && (neighbors < deathPopLow || neighbors > deathPopHigh))
+                       {
+                            newCellGrid[i][j][k] = null;
+                       }
+                       else if(cellGrid[i][j][k] != null && !(neighbors < deathPopLow || neighbors > deathPopHigh))
+                       {
+                           newCellXForm.getChildren().add(cellGrid[i][j][k]);
+                           newCellGrid[i][j][k] = cellGrid[i][j][k];
+                       }
+                    }
+                }
+            }
+            cellGrid = newCellGrid;
+            return newCellXForm;
+        }
+
+        public int checkSurroundings(int x, int y, int z)
+        {
+            int neighbors = 0;
+            for(int i = x-1; i < x+2; i++)
+            {
+                for(int j = y-1; j<y+2; j++)
+                {
+                    for(int k = z-1; k<z+2; k++)
+                    {
+                        //System.out.println(i + " " + j + " " + k + ": " + grid[i][j][k]);
+                        if(cellGrid[i][j][k] != null && !(i == x && j == y && k ==z))
                         {
-                            currentCell.getChildren().remove(currentCell.getBox());
-                            currentCell.setAlive(false);
-                        }
-                        else if(!currentCell.isAlive() && (neighbors >= lifePopLow && neighbors <= lifePopHigh))
-                        {
-                            currentCell.getBox().setMaterial(greenMaterial);
-                            currentCell.getChildren().add(currentCell.getBox());
-                            currentCell.setAlive(true);
+                            neighbors++;
                         }
                     }
                 }
             }
+            return neighbors;
         }
+
+//        private void updateGrid(PhongMaterial greenMaterial) {
+//            for(int i = 1; i<31; i++)
+//            {
+//                for(int j = 1; j<31; j++)
+//                {
+//                    for(int k = 1; k<31; k++)
+//                    {
+//                        Cell currentCell = cellGrid[i][j][k];
+//                        int neighbors = currentCell.checkSurroundings(i, j , k);
+//                        if(currentCell.isAlive() && (neighbors > deathPopHigh || neighbors < deathPopLow))
+//                        {
+//                            currentCell.getChildren().remove(currentCell.getBox());
+//                            currentCell.setAlive(false);
+//                        }
+//                        else if(!currentCell.isAlive() && (neighbors >= lifePopLow && neighbors <= lifePopHigh))
+//                        {
+//                            currentCell.getBox().setMaterial(greenMaterial);
+//                            currentCell.getChildren().add(currentCell.getBox());
+//                            currentCell.setAlive(true);
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }

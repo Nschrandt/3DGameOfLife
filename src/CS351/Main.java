@@ -59,7 +59,7 @@ public class Main extends Application{
     private final double cellHeight = 1.0;
     private final double cellDepth = 1.0;
     private ArrayList<Cell> livingCells = new ArrayList<>();
-    private ArrayList<Cell> dytingCells = new ArrayList<>();
+    private ArrayList<Cell> dyingCells = new ArrayList<>();
 
     /*
     Method provided by the tutorial to build the camera node.
@@ -139,11 +139,9 @@ public class Main extends Application{
             {
                 for(int k = 1; k < 31; k++)
                 {
-                    if(random.nextInt(100) > 90){
+                    if(random.nextInt(100) > 98){
                         Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                         cellGrid[i][j][k] = newCell;
-                        newCell.setAlive(true);
-                        newCell.getBox().setMaterial(redMaterial);
                         newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
                         cellXform.getChildren().add(newCell);
@@ -216,6 +214,8 @@ public class Main extends Application{
                 time = System.nanoTime();
             }
 
+            adjustCells();
+
             /*This is code taken from the molecule project but adapted to turn
               without mouse input. */
             double modifier = 0.1;
@@ -243,14 +243,18 @@ public class Main extends Application{
                        {
                            Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                            newCellGrid[i][j][k] = newCell;
-                           newCell.getBox().setMaterial(greenMaterial);
                            newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                    k * cellDepth - (15 * cellDepth));
                            newCellXForm.getChildren().add(newCell);
+                           livingCells.add(newCell);
                        }
                        else if(cellGrid[i][j][k] != null && (neighbors < deathPopLow || neighbors > deathPopHigh))
                        {
-                            newCellGrid[i][j][k] = null;
+                           newCellXForm.getChildren().add(cellGrid[i][j][k]);
+                           dyingCells.add(cellGrid[i][j][k]);
+                           newCellGrid[i][j][k] = null;
+                           cellGrid[i][j][k] = null;
+
                        }
                        else if(cellGrid[i][j][k] != null && !(neighbors < deathPopLow || neighbors > deathPopHigh))
                        {
@@ -264,7 +268,36 @@ public class Main extends Application{
             return newCellXForm;
         }
 
-        public int checkSurroundings(int x, int y, int z)
+        private void adjustCells()
+        {
+            ArrayList<Cell> livingRemovals = new ArrayList<>();
+            ArrayList<Cell> dyingRemovals = new ArrayList<>();
+            for(Cell cell : livingCells)
+            {
+                if(cell.live() >= 60)
+                {
+                    livingRemovals.add(cell);
+                }
+            }
+            for(Cell cell : dyingCells)
+            {
+                if(cell.die() <= 0)
+                {
+                    cellXform.getChildren().remove(cell);
+                    dyingRemovals.add(cell);
+                }
+            }
+            for(Cell cell: livingRemovals)
+            {
+                livingCells.remove(cell);
+            }
+            for(Cell cell: dyingRemovals)
+            {
+                dyingCells.remove(cell);
+            }
+        }
+
+        private int checkSurroundings(int x, int y, int z)
         {
             int neighbors = 0;
             for(int i = x-1; i < x+2; i++)

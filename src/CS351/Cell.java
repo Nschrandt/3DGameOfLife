@@ -9,16 +9,10 @@ public class Cell extends Xform{
 
     private Box cellBox;
     private Cell[][][] grid;
-    private int xPosition;
-    private int yPosition;
-    private int zPosition;
     private boolean isAlive;
 
     public Cell(int x, int y, int z, Cell[][][] cellGrid)
     {
-        xPosition = x;
-        yPosition = y;
-        zPosition = z;
         grid = cellGrid;
     }
 
@@ -42,17 +36,18 @@ public class Cell extends Xform{
         return cellBox;
     }
 
-    public int checkSurroundings()
+    public int checkSurroundings(int x, int y, int z)
     {
         int neighbors = 0;
-        for(int i = xPosition-1; i < xPosition+2; i++)
+        for(int i = x-1; i < x+2; i++)
         {
-            for(int j = yPosition-1; j<yPosition+2; j++)
+            for(int j = y-1; j<y+2; j++)
             {
-                for(int k = zPosition-1; k<zPosition+2; k++)
+                for(int k = z-1; k<z+2; k++)
                 {
+                    //System.out.println(i + " " + j + " " + k + ": " + grid[i][j][k]);
                     if(grid[i][j][k] != null && grid[i][j][k].isAlive()
-                            && !(i == xPosition && j == yPosition && k ==zPosition))
+                            && !(i == x && j == y && k ==z))
                     {
                         neighbors++;
                     }

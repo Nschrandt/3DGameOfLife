@@ -58,7 +58,8 @@ public class Main extends Application{
     private final double cellWidth = 1.0;
     private final double cellHeight = 1.0;
     private final double cellDepth = 1.0;
-    private ArrayList<Xform> livingCells = new ArrayList();
+    private ArrayList<Cell> livingCells = new ArrayList<>();
+    private ArrayList<Cell> dytingCells = new ArrayList<>();
 
     /*
     Method provided by the tutorial to build the camera node.
@@ -144,11 +145,11 @@ public class Main extends Application{
                     //Xform newXform = new Xform();
                     if(random.nextInt(100) > 95) {
                         newCell.setAlive(true);
-                        livingCells.add(newCell);
                         newCell.getBox().setMaterial(redMaterial);
                         newCell.getChildren().add(newCell.getBox());
                         newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
+                        //System.out.println(i + " " + j + " " + k + " " + ": " + newCell.checkSurroundings());
                     }
                     cellXform.getChildren().add(newCell);
                 }
@@ -223,9 +224,9 @@ public class Main extends Application{
               without mouse input. */
             double modifier = 0.1;
             cameraXform.ry.setAngle(cameraXform.ry.getAngle() -
-                    10*modifier*ROTATION_SPEED);
+                    modifier*ROTATION_SPEED);
             cameraXform.rx.setAngle(cameraXform.rx.getAngle() +
-                    10*modifier*ROTATION_SPEED);
+                    modifier*ROTATION_SPEED);
         }
 
         private void updateGrid(PhongMaterial greenMaterial) {
@@ -236,7 +237,7 @@ public class Main extends Application{
                     for(int k = 1; k<31; k++)
                     {
                         Cell currentCell = cellGrid[i][j][k];
-                        int neighbors = currentCell.checkSurroundings();
+                        int neighbors = currentCell.checkSurroundings(i, j , k);
                         if(currentCell.isAlive() && (neighbors > deathPopHigh || neighbors < deathPopLow))
                         {
                             currentCell.getChildren().remove(currentCell.getBox());

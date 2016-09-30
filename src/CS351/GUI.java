@@ -62,14 +62,14 @@ public class GUI
     private GridPane createWindow()
     {
         GridPane window = new GridPane();
-        slider1 = createSlider();
-        slider2 = createSlider();
-        slider3 = createSlider();
-        slider4 = createSlider();
-        Label label1 = new Label("r1: ");
-        Label label2 = new Label("r2: ");
-        Label label3 = new Label("r3: ");
-        Label label4 = new Label("r4: ");
+        slider1 = createLowSlider();
+        slider2 = createHighSlider();
+        slider3 = createLowSlider();
+        slider4 = createHighSlider();
+        Label label1 = new Label("Low Population Death: ");
+        Label label2 = new Label("Over Population Death: ");
+        Label label3 = new Label("Low Population Birth: ");
+        Label label4 = new Label("High Population Birth: ");
 
         GridPane.setConstraints(label1, 0, 0);
         window.getChildren().add(label1);
@@ -94,14 +94,27 @@ public class GUI
         return window;
     }
 
-    private Slider createSlider()
+    private Slider createLowSlider()
     {
-        Slider newSlider = new Slider(1,10,1);
+        Slider newSlider = new Slider(1,26,1);
         newSlider.setMajorTickUnit(1);
         newSlider.setMinorTickCount(0);
         newSlider.setSnapToTicks(true);
         newSlider.setShowTickMarks(true);
         newSlider.setShowTickLabels(true);
+        newSlider.setPrefWidth(400);
+        return newSlider;
+    }
+
+    private Slider createHighSlider()
+    {
+        Slider newSlider = new Slider(1,26,10);
+        newSlider.setMajorTickUnit(1);
+        newSlider.setMinorTickCount(0);
+        newSlider.setSnapToTicks(true);
+        newSlider.setShowTickMarks(true);
+        newSlider.setShowTickLabels(true);
+        newSlider.setPrefWidth(400);
         return newSlider;
     }
 }

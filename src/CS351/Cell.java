@@ -51,7 +51,8 @@ public class Cell extends Xform{
             {
                 for(int k = zPosition-1; k<zPosition+2; k++)
                 {
-                    if(grid[i][j][k] != null && grid[i][j][k].isAlive)
+                    if(grid[i][j][k] != null && grid[i][j][k].isAlive()
+                            && !(i == xPosition && j == yPosition && k ==zPosition))
                     {
                         neighbors++;
                     }

@@ -1,13 +1,5 @@
 /*Nick Schrandt
 
-This class is a modified version of the one presented in the JavaFX tutorial on
-https://docs.oracle.com/javase/8/javafx/graphics-tutorial/sampleapp3d.htm.
-
-In addition to creating an H2O molucule, it has two PointLight sources initially set
-to red and white. One of them is behind the molucule and the other is in front of it.
-By pressing the UP arrow on the keyboard, you can change one of the lights to a random
-color, and by pressing the DOWN arrow on the keyboard, you can change the other light
-to a random color.
  */
 
 package CS351;
@@ -18,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -51,6 +44,11 @@ public class Main extends Application{
     double mouseOldY;
     double mouseDeltaX;
     double mouseDeltaY;
+
+    private double deathPopLow;
+    private double deathPopHigh;
+    private double lifePopLow;
+    private double lifePopHigh;
 
     private Stage primaryStage;
     private Cell[][][] cellGrid = new Cell[32][32][32];
@@ -109,9 +107,9 @@ public class Main extends Application{
                 }
                 if (me.isPrimaryButtonDown()) {
                     cameraXform.ry.setAngle(cameraXform.ry.getAngle() -
-                            mouseDeltaX*modifier*ROTATION_SPEED);  //
+                            mouseDeltaX*modifier*ROTATION_SPEED);
                     cameraXform.rx.setAngle(cameraXform.rx.getAngle() +
-                            mouseDeltaY*modifier*ROTATION_SPEED);  // -
+                            mouseDeltaY*modifier*ROTATION_SPEED);
                 }
                 else if (me.isSecondaryButtonDown()) {
                     double z = camera.getTranslateZ();
@@ -130,6 +128,9 @@ public class Main extends Application{
 
     private void buildCell()
     {
+        PhongMaterial redMaterial = new PhongMaterial();
+        redMaterial.setDiffuseColor(Color.RED);
+        redMaterial.setSpecularColor(Color.DARKRED);
         cellXform = new Xform();
         for(int i = 1; i < 31; i++)
         {
@@ -141,9 +142,10 @@ public class Main extends Application{
                     cellGrid[i][j][k] = newCell;
                     newCell.createBox(cellWidth,cellHeight,cellDepth);
                     //Xform newXform = new Xform();
-                    if(random.nextInt(100) > 90) {
+                    if(random.nextInt(100) > 95) {
                         newCell.setAlive(true);
                         livingCells.add(newCell);
+                        newCell.getBox().setMaterial(redMaterial);
                         newCell.getChildren().add(newCell.getBox());
                         newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
@@ -155,11 +157,20 @@ public class Main extends Application{
         world.getChildren().add(cellXform);
     }
 
+    private void setRValues()
+    {
+        deathPopLow = gui.getR1();
+        deathPopHigh = gui.getR2();
+        lifePopLow = gui.getR3();
+        lifePopHigh = gui.getR4();
+    }
+
     public void startSimulation()
     {
         root.getChildren().add(world);
         root.setDepthTest(DepthTest.ENABLE);
         buildCamera();
+        setRValues();
         buildCell();
 
         Scene scene = new Scene(root, 1024, 768, true);
@@ -199,30 +210,46 @@ public class Main extends Application{
     class SimulationTimer extends AnimationTimer{
         @Override
         public void handle(long now) {
+            PhongMaterial greenMaterial = new PhongMaterial();
+            greenMaterial.setDiffuseColor(Color.GREEN);
+            greenMaterial.setSpecularColor(Color.DARKGREEN);
             if(now - time > 1_000_000_000)
             {
-                for(int i = 1; i<31; i++)
+                updateGrid(greenMaterial);
+                time = System.nanoTime();
+            }
+
+            /*This is code taken from the molecule project but adapted to turn
+              without mouse input. */
+            double modifier = 0.1;
+            cameraXform.ry.setAngle(cameraXform.ry.getAngle() -
+                    10*modifier*ROTATION_SPEED);
+            cameraXform.rx.setAngle(cameraXform.rx.getAngle() +
+                    10*modifier*ROTATION_SPEED);
+        }
+
+        private void updateGrid(PhongMaterial greenMaterial) {
+            for(int i = 1; i<31; i++)
+            {
+                for(int j = 1; j<31; j++)
                 {
-                    for(int j = 1; j<31; j++)
+                    for(int k = 1; k<31; k++)
                     {
-                        for(int k = 1; k<31; k++)
+                        Cell currentCell = cellGrid[i][j][k];
+                        int neighbors = currentCell.checkSurroundings();
+                        if(currentCell.isAlive() && (neighbors > deathPopHigh || neighbors < deathPopLow))
                         {
-                            Cell currentCell = cellGrid[i][j][k];
-                            int neighbors = currentCell.checkSurroundings();
-                            if(currentCell.isAlive() && (neighbors > 6 || neighbors < 2))
-                            {
-                                currentCell.getChildren().remove(currentCell.getBox());
-                                currentCell.setAlive(false);
-                            }
-                            else if(!currentCell.isAlive() && (neighbors >= 2 && neighbors <= 6 ))
-                            {
-                                currentCell.getChildren().add(currentCell.getBox());
-                                currentCell.setAlive(true);
-                            }
+                            currentCell.getChildren().remove(currentCell.getBox());
+                            currentCell.setAlive(false);
+                        }
+                        else if(!currentCell.isAlive() && (neighbors >= lifePopLow && neighbors <= lifePopHigh))
+                        {
+                            currentCell.getBox().setMaterial(greenMaterial);
+                            currentCell.getChildren().add(currentCell.getBox());
+                            currentCell.setAlive(true);
                         }
                     }
                 }
-                time = System.nanoTime();
             }
         }
     }

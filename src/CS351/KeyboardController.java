@@ -26,5 +26,9 @@ public class KeyboardController implements EventHandler<KeyEvent>
         {
             source.zoom(-5);
         }
+        if(event.getCode() == KeyCode.R)
+        {
+            source.stopSimulation();
+        }
     }
 }

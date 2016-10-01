@@ -42,6 +42,7 @@ public class GUI
         layout.setCenter(sliderWindow);
         GridPane presetWindow = createPresets();
         layout.setBottom(presetWindow);
+
         return startScene;
     }
 
@@ -79,8 +80,8 @@ public class GUI
         presetButtons[0].setText("Tower of Life and Death");
         presetButtons[1].setText("Pillars of Creation");
         presetButtons[2].setText("The Cubic Cycle");
-        presetButtons[3].setText("Button 4");
-        presetButtons[4].setText("Button 5");
+        presetButtons[3].setText("The Multi-Cross");
+        presetButtons[4].setText("The Eye of Zeus");
         return presetWindow;
     }
 
@@ -117,6 +118,10 @@ public class GUI
         window.getChildren().add(label4);
         GridPane.setConstraints(highPopLifeSlider, 1, 3);
         window.getChildren().add(highPopLifeSlider);
+
+        Label instructions = new Label("Press R during simulation to restart and press Up or Down to zoom.");
+        GridPane.setConstraints(instructions, 0, 6);
+        window.getChildren().add(instructions);
 
         return window;
     }
@@ -167,11 +172,11 @@ public class GUI
             }
             if(event.getSource() == presetButtons[3])
             {
-                System.out.println("4");
+                source.startSimulation(5);
             }
             if(event.getSource() == presetButtons[4])
             {
-                System.out.println("5");
+                source.startSimulation(6);
             }
         }
     }

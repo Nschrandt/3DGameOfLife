@@ -49,6 +49,7 @@ public class Main extends Application{
     private final double cellDepth = 1.0;
     private ArrayList<Cell> livingCells = new ArrayList<>();
     private ArrayList<Cell> dyingCells = new ArrayList<>();
+    private Scene simulationScene;
 
     /*
     Method provided by the tutorial to build the camera node.
@@ -164,6 +165,67 @@ public class Main extends Application{
         world.getChildren().add(cellXform);
     }
 
+    private void buildPreset4()
+    {
+        for(int i = 1; i < 31; i++)
+        {
+            for(int j = 15; j < 17; j++)
+            {
+                for(int k = 15; k < 17; k++)
+                {
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    cellGrid[i][j][k] = newCell;
+                    newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
+                            k * cellDepth - (15 * cellDepth));
+                    cellXform.getChildren().add(newCell);
+                }
+            }
+        }
+
+        for(int i = 15; i < 17; i++)
+        {
+            for(int j = 1; j < 31; j++)
+            {
+                for(int k = 15; k < 17; k++)
+                {
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    cellGrid[i][j][k] = newCell;
+                    newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
+                            k * cellDepth - (15 * cellDepth));
+                    cellXform.getChildren().add(newCell);
+                }
+            }
+        }
+        deathPopLow = 2;
+        deathPopHigh = 4;
+        lifePopLow = 2;
+        lifePopHigh = 3;
+        world.getChildren().add(cellXform);
+    }
+
+    private void buildPreset5()
+    {
+        for(int i = 14; i < 21; i+=2)
+        {
+            for(int j = 14; j < 21; j+=2)
+            {
+                for(int k = 14; k < 21; k+=2)
+                {
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    cellGrid[i][j][k] = newCell;
+                    newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
+                            k * cellDepth - (15 * cellDepth));
+                    cellXform.getChildren().add(newCell);
+                }
+            }
+        }
+        deathPopLow = 2;
+        deathPopHigh = 3;
+        lifePopLow = 4;
+        lifePopHigh = 4;
+        world.getChildren().add(cellXform);
+    }
+
     private void setRValues()
     {
         deathPopLow = gui.getLowPopDeath();
@@ -174,10 +236,7 @@ public class Main extends Application{
 
     public void startSimulation(int selection)
     {
-        root.getChildren().add(world);
-        root.setDepthTest(DepthTest.ENABLE);
         cellXform = new Xform();
-        buildCamera();
         switch (selection)
         {
             case 1:
@@ -194,19 +253,26 @@ public class Main extends Application{
                 buildPreset3();
                 break;
             case 5:
+                buildPreset4();
                 break;
             case 6:
+                buildPreset5();
                 break;
         }
-        Scene scene = new Scene(root, 1024, 768, true);
-        scene.setFill(Color.BLACK);
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, (keyboard));
 
-        primaryStage.setScene(scene);
+        primaryStage.setScene(simulationScene);
         primaryStage.show();
-        scene.setCamera(camera);
+        simulationScene.setCamera(camera);
         time = System.nanoTime();
         timer.start();
+    }
+
+    public void stopSimulation(){
+        timer.stop();
+        primaryStage.setScene(gui.createStartScene());
+        world.getChildren().remove(cellXform);
+        cellXform = null;
+        cellGrid = new Cell[32][32][32];
     }
 
     public void zoom(int direction)
@@ -217,6 +283,12 @@ public class Main extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception
     {
+        root.getChildren().add(world);
+        root.setDepthTest(DepthTest.ENABLE);
+        buildCamera();
+        simulationScene = new Scene(root, 1024, 768, true);
+        simulationScene.setFill(Color.BLACK);
+        simulationScene.addEventHandler(KeyEvent.KEY_PRESSED, (keyboard));
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Molecule Sample Application");
         Scene startScene = gui.createStartScene();

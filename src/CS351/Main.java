@@ -1,3 +1,15 @@
+package CS351;
+
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.stage.Stage;
+import java.util.ArrayList;
+import java.util.Random;
+
 /**
  * @author Nick Schrandt
  *
@@ -18,36 +30,23 @@
  * This class was actually a part of the Molecule.java code from the previous project that was altered to fit the needs
  * of this project, so many aspects, such as the camera, are the same.
  */
-
-package CS351;
-
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
-import javafx.scene.*;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.stage.Stage;
-import java.util.ArrayList;
-import java.util.Random;
-
 public class Main extends Application{
 
     /** Root Group, created in the Molecule.java class */
-    final Group root = new Group();
+    final private Group root = new Group();
     /** world Xform, also from the Molecule.java class */
-    final Xform world = new Xform();
+    final private Xform world = new Xform();
     /** Main camera for the program. Also from the Molecule.java class */
-    final PerspectiveCamera camera = new PerspectiveCamera(true);
-    final Xform cameraXform = new Xform();
-    final Xform cameraXform2 = new Xform();
-    final Xform cameraXform3 = new Xform();
+    final private PerspectiveCamera camera = new PerspectiveCamera(true);
+    final private Xform cameraXform = new Xform();
+    private final Xform cameraXform2 = new Xform();
+    private final Xform cameraXform3 = new Xform();
     /** GUI class that creates the gui that allows for the user input */
-    final GUI gui = new GUI(this);
+    private final GUI gui = new GUI(this);
     /** Member class of the Main class that implements a*/
-    final SimulationTimer timer = new SimulationTimer();
+    private final SimulationTimer timer = new SimulationTimer();
     /** Small class that handles the keyboard input from the user for zoom and restart*/
-    final KeyboardController keyboard = new KeyboardController(this);
+    private final KeyboardController keyboard = new KeyboardController(this);
 
     /**Initial distance of camera from center. From Molecule.java*/
     private static final double CAMERA_INITIAL_DISTANCE = -150;
@@ -113,7 +112,6 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
      *
      * This function creates a random grid. In each Cell location there is a 4% chance that a Cell will populate that
      * space. If this happens, the cell is added to the cellGrid and its translate is set. It's then added to the
@@ -141,7 +139,6 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
      *
      * Similar to the previous method except this method builds a specific shape that creates an interesting
      * pattern in simulation. The parameters normally input by the user are automatically set.
@@ -170,7 +167,6 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
      *
      * Second preset method. Behaves the same as the previous.
      */
@@ -198,7 +194,6 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
      *
      * Third preset method. Behaves the same as the previous.
      */
@@ -232,7 +227,6 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
      *
      * Fourth preset method. Behaves the same as the previous.
      */
@@ -275,7 +269,6 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
      *
      * FIfth preset method. Behaves the same as the previous.
      */
@@ -303,7 +296,6 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
      *
      * This method is called when the random simulation is selected and it retrieves the parameter values from the
      * GUI class where the user set them on the sliders.
@@ -317,14 +309,12 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
-     *
+     ** This is called from the GUI class when a selection has been made by the user.
      * @param selection Determined by the button pressed by the user. 1 is a random simulation, 2-6 are the preset
      *                  buttons.
      *
-     * This is called from the GUI class when a selection has been made by the user.
      */
-    public void startSimulation(int selection)
+    protected void startSimulation(int selection)
     {
         cellXform = new Xform();
         switch (selection)
@@ -357,12 +347,11 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
      *
      * Function called by the KeyboardController when the reset button is pressed. It stops the AnimationTimer,
      * resets the scene to the GUI start screne, and resets the fields so that a new simulation can begin.
      */
-    public void stopSimulation(){
+    protected void stopSimulation(){
         timer.stop();
         primaryStage.setScene(gui.createStartScene());
         world.getChildren().remove(cellXform);
@@ -371,24 +360,22 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
+     * Simple function called from the KeyboardController class when the up or down arrows are pressed by the user.
      * @param direction direction in which the camera will move.
      *
      * Simple function called from the KeyboardController class when the up or down arrows are pressed by the user.
      */
-    public void zoom(int direction)
+    protected void zoom(int direction)
     {
         timer.zoomCamera(direction);
     }
 
     /**
-     * @author Nick Schrandt
-     * @param primaryStage main stage upon which the animation takes place.
-     * @throws Exception
-     *
      * This is the overwite of the start method for the Animation class and does all the primary setup for the
      * simulation to run, including creating the simulation scene, and calling the GUI class to create a start
      * scene, which it then displays.
+     * @param primaryStage main stage upon which the animation takes place.
+     * @throws Exception exceptiong
      */
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -407,25 +394,23 @@ public class Main extends Application{
     }
 
     /**
-     * @author Nick Schrandt
      *
      * This is a member class for the Main class that extends AnimationTImer and serves as the main timer for the
      * simulation.
      */
-    class SimulationTimer extends AnimationTimer{
+    private class SimulationTimer extends AnimationTimer{
 
         /**
-         * @author Nick Schrandt
-         * @param now Current timestamp in nanoseconds.
-         *
-         *
-         * This is the override for the handle method, which is called every frame. The first thing it does is check to
+         * * This is the override for the handle method, which is called every frame. The first thing it does is check to
          * see if a second has passed. If so, it updates the cellGrid and cellXform and resets the time variable.
          *
          * It also calls the adjustCells method each frame, which controls the animation for the cells living and dying.
          *
          * Finally, it controls the rotation of the camera, which was an adapted block of code from the Molecule.java
          * class.
+         * @param now Current timestamp in nanoseconds.
+         *
+         *
          */
         @Override
         public void handle(long now) {
@@ -449,11 +434,10 @@ public class Main extends Application{
         }
 
         /**
-         * @author Nick Schrandt
-         * @param direction direction in which the camera will zoom.
-         *
          * This method is called from the Main when it receives the event from the KeyboardController class. It
          * zooms the camera either in or out, depending on the key pressed. The zoom is bounded.
+         * @param direction direction in which the camera will zoom.
+         *
          */
         private void zoomCamera(int direction)
         {
@@ -472,10 +456,6 @@ public class Main extends Application{
         }
 
         /**
-         * @author Nick Schrandt
-         *
-         * @return returns a new Xform with the updated Cells
-         *
          * This method is called every second. It loops through the 3D grid and checks every position against the
          * parameters passed by the user, or stored in the preset simulation. If a space has enough nieghbors to become
          * a cell, a new cell is created and placed in a new copy of the grid and a new copy of the Xform. It's also
@@ -486,6 +466,9 @@ public class Main extends Application{
          * animation.
          *
          * Finally if a cell doesn't need to die or come to life, it is simply copied into the new grid and Xform.
+         * @return returns a new Xform with the updated Cells
+         *
+         *
          */
         private Xform updateGrid()
         {
@@ -529,7 +512,6 @@ public class Main extends Application{
         }
 
         /**
-         * @author Nick Schrandt
          *
          * This is the method that controls the animation of the cells as they come to life or die. It loops through
          * the livingCells and dyingCells lists and calls the Cell.live() or Cell.die() methods respectively. If either
@@ -568,14 +550,14 @@ public class Main extends Application{
         }
 
         /**
-         * @author Nick Schrandt
+         * This method is called to check how many neighbors it has so it can be checked against the parameters for the
+         * simulation. It will not count itself.
+         *
          * @param x x value in the 3D cell grid
          * @param y y value in the 3D cell grid
          * @param z z value in the 3D cell grid
          * @return number of beighbors around the given space.
          *
-         * This method is called to check how many neighbors it has so it can be checked against the parameters for the
-         * simulation. It will not count itself.
          */
         private int checkSurroundings(int x, int y, int z)
         {
@@ -599,7 +581,7 @@ public class Main extends Application{
 
     /**
      * main method.
-     * @param args
+     * @param args command line args
      */
     public static void main(String[] args)
     {

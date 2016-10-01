@@ -50,7 +50,7 @@ public class GUI
      * creationg methods and then returns the Scene back to the Main class to be displayed.
      * @return Scene for the initial GUI
      */
-    public Scene createStartScene()
+    protected Scene createStartScene()
     {
         layout = new BorderPane();
         startScene = new Scene(layout, 1024, 768, true);
@@ -71,7 +71,7 @@ public class GUI
      * Allows the Main to retrieve whatever value the slider is on.
      * @return the slider value.
      */
-    public double getLowPopDeath()
+    protected double getLowPopDeath()
     {
         return lowPopDeathSlider.getValue();
     }
@@ -80,7 +80,7 @@ public class GUI
      * Allows the Main to retrieve whatever value the slider is on.
      * @return the slider value.
      */
-    public double getHighPopDeath()
+    protected double getHighPopDeath()
     {
         return highPopDeathSlider.getValue();
     }
@@ -89,7 +89,7 @@ public class GUI
      * Allows the Main to retrieve whatever value the slider is on.
      * @return the slider value.
      */
-    public double getLowPopLife()
+    protected double getLowPopLife()
     {
         return lowPopLifeSlider.getValue();
     }
@@ -98,7 +98,7 @@ public class GUI
      * Allows the Main to retrieve whatever value the slider is on.
      * @return the slider value.
      */
-    public double getHighPopLife()
+    protected double getHighPopLife()
     {
         return highPopLifeSlider.getValue();
     }
@@ -208,7 +208,7 @@ public class GUI
      * This is a member class that implements and EventHandler. When any of the buttons are pressed in the GUI window,
      * it calls the startSimulation() method in the Main class with the correct parameter.
      */
-    class Controller implements EventHandler
+    private class Controller implements EventHandler
     {
         @Override
         public void handle(Event event) {

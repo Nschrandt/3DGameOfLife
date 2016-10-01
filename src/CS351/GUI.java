@@ -70,11 +70,17 @@ public class GUI
         GridPane presetWindow = new GridPane();
         for(int i = 0; i < 5; i++)
         {
-            Button newButton = new Button();
+            presetButtons[i] = new Button();
+            Button newButton = presetButtons[i];
             newButton.setOnAction(controller);
             GridPane.setConstraints(newButton,i, 0);
             presetWindow.getChildren().add(newButton);
         }
+        presetButtons[0].setText("Tower of Life and Death");
+        presetButtons[1].setText("Pillars of Creation");
+        presetButtons[2].setText("The Cubic Cycle");
+        presetButtons[3].setText("Button 4");
+        presetButtons[4].setText("Button 5");
         return presetWindow;
     }
 
@@ -143,10 +149,29 @@ public class GUI
     {
         @Override
         public void handle(Event event) {
-            System.out.println(event.getSource());
             if(event.getSource() == randomStartButton)
             {
                 source.startSimulation(1);
+            }
+            if(event.getSource() == presetButtons[0])
+            {
+                source.startSimulation(2);
+            }
+            if(event.getSource() == presetButtons[1])
+            {
+                source.startSimulation(3);
+            }
+            if(event.getSource() == presetButtons[2])
+            {
+                source.startSimulation(4);
+            }
+            if(event.getSource() == presetButtons[3])
+            {
+                System.out.println("4");
+            }
+            if(event.getSource() == presetButtons[4])
+            {
+                System.out.println("5");
             }
         }
     }

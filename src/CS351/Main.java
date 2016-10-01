@@ -91,17 +91,77 @@ public class Main extends Application{
 
     private void buildPreset1()
     {
-        for(int i = 1; i < 31; i++)
+        for(int i = 15; i < 17; i++)
+        {
+            for(int j = 15; j < 17; j++)
+            {
+                for(int k = 1; k < 31; k++)
+                {
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    cellGrid[i][j][k] = newCell;
+                    newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
+                            k * cellDepth - (15 * cellDepth));
+                    cellXform.getChildren().add(newCell);
+                }
+            }
+        }
+        deathPopLow = 4;
+        deathPopHigh = 9;
+        lifePopLow = 5;
+        lifePopHigh = 7;
+        world.getChildren().add(cellXform);
+    }
+
+    private void buildPreset2()
+    {
+        for(int i = 1; i < 31; i+=9)
         {
             for(int j = 1; j < 31; j++)
             {
-                Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
-                cellGrid[31][i][j] = newCell;
-                newCell.setTranslate(31 * cellWidth - (15 * cellWidth), i * cellHeight - (15 * cellHeight),
-                        j * cellDepth - (15 * cellDepth));
-                cellXform.getChildren().add(newCell);
+                for(int k = 1; k < 31; k+=9)
+                {
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    cellGrid[i][j][k] = newCell;
+                    newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
+                            k * cellDepth - (15 * cellDepth));
+                    cellXform.getChildren().add(newCell);
+                }
             }
         }
+        deathPopLow = 1;
+        deathPopHigh = 4;
+        lifePopLow = 2;
+        lifePopHigh = 2;
+        world.getChildren().add(cellXform);
+    }
+
+    private void buildPreset3()
+    {
+        for(int i = 1; i < 31; i+=12)
+        {
+            for(int j = 1; j < 31; j+=12)
+            {
+                for(int k = 1; k < 31; k+=12)
+                {
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    cellGrid[i][j][k] = newCell;
+                    newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
+                            k * cellDepth - (15 * cellDepth));
+                    cellXform.getChildren().add(newCell);
+
+                    Cell newCell2 = new Cell(cellWidth,cellHeight,cellDepth);
+                    cellGrid[i+1][j+1][k+1] = newCell2;
+                    newCell2.setTranslate(i * cellWidth - (15 * cellWidth)+1, j * cellHeight - (15 * cellHeight)+1,
+                            k * cellDepth - (15 * cellDepth)+1);
+                    cellXform.getChildren().add(newCell2);
+                }
+            }
+        }
+        deathPopLow = 1;
+        deathPopHigh = 1;
+        lifePopLow = 1;
+        lifePopHigh = 1;
+        world.getChildren().add(cellXform);
     }
 
     private void setRValues()
@@ -123,13 +183,15 @@ public class Main extends Application{
             case 1:
                 setRValues();
                 buildRandomGrid();
-                //buildPreset1();
                 break;
             case 2:
+                buildPreset1();
                 break;
             case 3:
+                buildPreset2();
                 break;
             case 4:
+                buildPreset3();
                 break;
             case 5:
                 break;
@@ -229,7 +291,7 @@ public class Main extends Application{
                            newCellXForm.getChildren().add(cellGrid[i][j][k]);
                            dyingCells.add(cellGrid[i][j][k]);
                            newCellGrid[i][j][k] = null;
-                           cellGrid[i][j][k] = null;
+                           //cellGrid[i][j][k] = null;
 
                        }
                        else if(cellGrid[i][j][k] != null && !(neighbors < deathPopLow || neighbors > deathPopHigh))

@@ -85,7 +85,7 @@ public class Cell extends Xform{
         }
         else
         {
-            dyingColor.setDiffuseColor(Color.BLACK);
+            dyingColor.setDiffuseColor(Color.DARKRED);
         }
     }
 }

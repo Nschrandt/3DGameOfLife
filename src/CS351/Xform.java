@@ -30,6 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * This is the same Xform class used in the Molecule.java program. It is entirely unaltered.
+ */
 package CS351;
 
 import javafx.scene.Group;

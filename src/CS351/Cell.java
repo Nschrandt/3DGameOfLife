@@ -5,17 +5,32 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
 /**
- * Created by nick on 9/25/16.
+ * @author Nick Schrandt
+ *
+ * This is the class for the cells that inhabit the 3D grid for the Game of Life Simulation.
  */
 public class Cell extends Xform{
 
+    /**JavaFX Box shape that is actually displayed*/
     private Box cellBox;
+    /**Timer to control the animation of a cell coming to life*/
     private double dieTimer = 60;
+    /**Timer to control the animation of a dying cell*/
     private double liveTimer = 0;
+    /**Material used to coat the cells as they come to life*/
     private PhongMaterial livingColor = new PhongMaterial();
+    /**Material used to coat the cells as they die*/
     private PhongMaterial dyingColor = new PhongMaterial();
 
-
+    /**
+     * @author Nick Schrandt
+     * @param boxWidth width of the cell
+     * @param boxHeight height of the cell
+     * @param boxDepth depth of the cell
+     *
+     *This is the Constructor for the Cell class. It creates a Box and adds the box to itself, as well as sets its
+     *default color.
+     */
     public Cell(double boxWidth, double boxHeight, double boxDepth)
     {
         cellBox = new Box(boxWidth,boxHeight,boxDepth);
@@ -25,6 +40,14 @@ public class Cell extends Xform{
         cellBox.setMaterial(livingColor);
     }
 
+    /**
+     * @uathor Nick Schrandt
+     * @return value of the liveTimer. In the Main.java class, it checks this to determine if the cell has finished
+     * its animation.
+     *
+     * This is called when a cell has just been created during the AnimationTimer. It calls the setLiveColor() to adjust
+     * the color and also scales itself so that it appears to grow over the course of its animation.
+     */
    public double live()
    {
        this.setScale(liveTimer/60);
@@ -34,6 +57,12 @@ public class Cell extends Xform{
        return liveTimer;
    }
 
+    /**
+     * @author Nick Schrandt
+     *
+     * This method changes the diffuse color of the living material based on the current state of animation of the
+     * cell.
+     */
    private void setLiveColor(){
        if(liveTimer < 20)
        {
@@ -57,6 +86,13 @@ public class Cell extends Xform{
        }
    }
 
+    /**
+     * @author Nick Schrandt
+     * @return value of the dyingTimer. In the Main.java class, it checks this to determine if the cell has finished
+     * its animation.
+     *
+     * Behaves in the same fashion as does the live() method, except that the cell shrinks in its animation.
+     */
    public double die()
    {
        this.setScale(dieTimer/60);
@@ -66,6 +102,9 @@ public class Cell extends Xform{
        return dieTimer;
    }
 
+    /**
+     * Same implementation as setLivingColor()
+     */
     private void setDyingColor(){
         if(liveTimer < 20)
         {

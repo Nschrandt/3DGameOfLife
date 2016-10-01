@@ -9,26 +9,47 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.*;
 
 /**
- * Created by nick on 9/27/16.
+ * @author Nick Schrandt
+ *
+ * This class creates the GUI at the start of the animation that allows the user to select a simulation type.
  */
 public class GUI
 {
+    /**Scene to hold the GUI elements*/
     private Scene startScene;
+    /**Button to start the random Simulation*/
     private Button randomStartButton;
+    /**layout for the startScene*/
     private BorderPane layout;
+    /**Member class that implements EventHandler to react to user input*/
     private Controller controller = new Controller();
+    /**slider to select the parameter for lower death bound*/
     private Slider lowPopDeathSlider;
+    /**slider to select the parameter for upper death bound*/
     private Slider highPopDeathSlider;
+    /**slider to select the parameter for lower life bound*/
     private Slider lowPopLifeSlider;
+    /**slider to select the parameter for upper life bound*/
     private Slider highPopLifeSlider;
+    /**Array of buttons that allow the user to select one of the preset simulations*/
     private Button[] presetButtons = new Button[5];
+    /**Reference to the Main.java that created this GUI*/
     private Main source;
 
+    /**
+     * Constructor method. Sets the source object that created it.
+     * @param source the Main class that created this GUI
+     */
     public GUI(Main source)
     {
         this.source = source;
     }
 
+    /**
+     * Method that creates the opening scene for the program. Sets the layout, the scene, calls all of the GUI
+     * creationg methods and then returns the Scene back to the Main class to be displayed.
+     * @return Scene for the initial GUI
+     */
     public Scene createStartScene()
     {
         layout = new BorderPane();
@@ -46,26 +67,47 @@ public class GUI
         return startScene;
     }
 
+    /**
+     * Allows the Main to retrieve whatever value the slider is on.
+     * @return the slider value.
+     */
     public double getLowPopDeath()
     {
         return lowPopDeathSlider.getValue();
     }
 
+    /**
+     * Allows the Main to retrieve whatever value the slider is on.
+     * @return the slider value.
+     */
     public double getHighPopDeath()
     {
         return highPopDeathSlider.getValue();
     }
 
+    /**
+     * Allows the Main to retrieve whatever value the slider is on.
+     * @return the slider value.
+     */
     public double getLowPopLife()
     {
         return lowPopLifeSlider.getValue();
     }
 
+    /**
+     * Allows the Main to retrieve whatever value the slider is on.
+     * @return the slider value.
+     */
     public double getHighPopLife()
     {
         return highPopLifeSlider.getValue();
     }
 
+    /**
+     * Creates a GridPane with all of the sliders that allow the user to select the parameters for the random
+     * simulation.
+     * @return The GridPane with all of the preset buttons
+     */
     private GridPane createPresets()
     {
         GridPane presetWindow = new GridPane();
@@ -85,6 +127,10 @@ public class GUI
         return presetWindow;
     }
 
+    /**
+     * Method that creates and populates the window for all of the sliders as well as the instructions.
+     * @return the GridPane with the sliders.
+     */
     private GridPane createWindow()
     {
         GridPane window = new GridPane();
@@ -126,6 +172,10 @@ public class GUI
         return window;
     }
 
+    /**
+     * Creates and sets up a slider with a lower value.
+     * @return lower-value slider.
+     */
     private Slider createLowSlider()
     {
         Slider newSlider = new Slider(1,26,3);
@@ -138,6 +188,10 @@ public class GUI
         return newSlider;
     }
 
+    /**
+     * Creates and sets up a slider with a higher initial value.
+     * @return Slider
+     */
     private Slider createHighSlider()
     {
         Slider newSlider = new Slider(1,26,6);
@@ -150,6 +204,10 @@ public class GUI
         return newSlider;
     }
 
+    /**
+     * This is a member class that implements and EventHandler. When any of the buttons are pressed in the GUI window,
+     * it calls the startSimulation() method in the Main class with the correct parameter.
+     */
     class Controller implements EventHandler
     {
         @Override

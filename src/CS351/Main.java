@@ -62,7 +62,7 @@ public class Main extends Application{
     /**Initial rotation speed camera. From Molecule.java*/
     private static final double ROTATION_SPEED = 2.0;
 
-    private static final int THREAD_COUNT = 3;
+    private static final int THREAD_COUNT = 6;
 
     /**This will store the lower bound of neighbors at which a cell dies*/
     private double deathPopLow;
@@ -323,6 +323,7 @@ public class Main extends Application{
      */
     protected void startSimulation(int selection)
     {
+        setUpThreads();
         cellXform = new Xform();
         switch (selection)
         {
@@ -364,6 +365,10 @@ public class Main extends Application{
      */
     protected void stopSimulation(){
         timer.stop();
+        for(CellWorker worker : workers)
+        {
+            worker.stopRunning();
+        }
         primaryStage.setScene(gui.createStartScene());
         world.getChildren().remove(cellXform);
         cellXform = null;
@@ -391,7 +396,6 @@ public class Main extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        setUpThreads();
         root.getChildren().add(world);
         root.setDepthTest(DepthTest.ENABLE);
         buildCamera();
@@ -411,7 +415,7 @@ public class Main extends Application{
         {
             CellWorker newWorker = new CellWorker(i, i + (30/THREAD_COUNT-1));
             newWorker.setDaemon(true);
-            newWorker.gridUpdated(cellGrid);
+            newWorker.gridUpdated(cellGrid, cellXform, livingCells, dyingCells);
             workers[i/(30/THREAD_COUNT)] = newWorker;
         }
     }
@@ -445,7 +449,7 @@ public class Main extends Application{
                 time = System.nanoTime();
                 for(CellWorker worker : workers)
                 {
-                    worker.gridUpdated(cellGrid);
+                    worker.gridUpdated(cellGrid,cellXform,livingCells,dyingCells);
                 }
             }
 

@@ -61,6 +61,8 @@ public class Main extends Application{
     /**Initial rotation speed camera. From Molecule.java*/
     private static final double ROTATION_SPEED = 2.0;
 
+    private static final int THREAD_COUNT = 6;
+
     /**This will store the lower bound of neighbors at which a cell dies*/
     private double deathPopLow;
     /**This will store the upper bound of neighbors at which a cell dies*/
@@ -92,6 +94,8 @@ public class Main extends Application{
     private ArrayList<Cell> dyingCells = new ArrayList<>();
     /**Main scene for the simulation*/
     private Scene simulationScene;
+
+    private CellWorker[] workers = new CellWorker[THREAD_COUNT];
 
 
 
@@ -382,6 +386,7 @@ public class Main extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception
     {
+        setUpThreads();
         root.getChildren().add(world);
         root.setDepthTest(DepthTest.ENABLE);
         buildCamera();
@@ -393,6 +398,16 @@ public class Main extends Application{
         Scene startScene = gui.createStartScene();
         primaryStage.setScene(startScene);
         primaryStage.show();
+    }
+
+    private void setUpThreads()
+    {
+        for(int i = 1; i <= 30; i+=(30/THREAD_COUNT))
+        {
+            CellWorker newWorker = new CellWorker(i, i + (30/THREAD_COUNT-1));
+            workers[i/(30/THREAD_COUNT)] = newWorker;
+            System.out.println(i/(30/THREAD_COUNT));
+        }
     }
 
     /**

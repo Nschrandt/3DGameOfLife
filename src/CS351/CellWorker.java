@@ -34,8 +34,13 @@ public class CellWorker extends Thread {
             }
             if(tick)
             {
-                System.out.println(startY);
+                //ANIMATE
                 tick = false;
+            }
+            try{
+                sleep(10);
+            }catch(InterruptedException e){
+                e.printStackTrace();
             }
         }
     }
@@ -47,7 +52,8 @@ public class CellWorker extends Thread {
 
     public void secondTick()
     {
-        tick = true;
+        System.out.println("THIS");
+        this.tick = true;
     }
 
     public static void main(String[] args)

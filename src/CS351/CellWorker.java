@@ -6,9 +6,9 @@ package CS351;
 public class CellWorker extends Thread {
     private int startY;
     private int endY;
-    private boolean tick = true;
-    private boolean isRunning = false;
+    private Cell[][][] cellGrid;
     private boolean isPaused = false;
+    private boolean tick = false;
 
     public CellWorker(int start, int end)
     {
@@ -19,10 +19,24 @@ public class CellWorker extends Thread {
     @Override
     public void run()
     {
-        while(isRunning && !isPaused)
+        while(!isPaused)
         {
-
+            if(tick)
+            {
+                System.out.println(startY);
+                tick = false;
+            }
         }
+    }
+
+    public void gridUpdated(Cell[][][] grid)
+    {
+        this.cellGrid = grid;
+    }
+
+    public void secondTick()
+    {
+        tick = true;
     }
 
     public static void main(String[] args)
@@ -33,6 +47,5 @@ public class CellWorker extends Thread {
             Cell newCell = new Cell(1,1,1);
             cells[i] = newCell;
         }
-
     }
 }

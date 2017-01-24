@@ -32,6 +32,7 @@ import java.util.Random;
  */
 public class Main extends Application{
 
+
     /** Root Group, created in the Molecule.java class */
     final private Group root = new Group();
     /** world Xform, also from the Molecule.java class */
@@ -405,8 +406,8 @@ public class Main extends Application{
         for(int i = 1; i <= 30; i+=(30/THREAD_COUNT))
         {
             CellWorker newWorker = new CellWorker(i, i + (30/THREAD_COUNT-1));
+            newWorker.gridUpdated(cellGrid);
             workers[i/(30/THREAD_COUNT)] = newWorker;
-            System.out.println(i/(30/THREAD_COUNT));
         }
     }
 
@@ -437,8 +438,16 @@ public class Main extends Application{
                 cellXform = updateGrid();
                 world.getChildren().add(cellXform);
                 time = System.nanoTime();
+                for(CellWorker worker : workers)
+                {
+                    worker.gridUpdated(cellGrid);
+                }
             }
 
+            for(CellWorker worker : workers)
+            {
+                worker.secondTick();
+            }
             adjustCells();
 
             /*This is code taken from the molecule project but adapted to turn

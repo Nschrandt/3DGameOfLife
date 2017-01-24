@@ -7,6 +7,7 @@ public class CellWorker extends Thread {
     private int startY;
     private int endY;
     private Cell[][][] cellGrid;
+    private boolean isRunning;
     private boolean isPaused = false;
     private boolean tick = false;
 
@@ -14,13 +15,23 @@ public class CellWorker extends Thread {
     {
         this.startY = start;
         this.endY = end;
+        isRunning = true;
     }
 
     @Override
     public void run()
     {
-        while(!isPaused)
+        while(isRunning)
         {
+            if(isPaused)
+            {
+                try {
+                    sleep(100);
+                    continue;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             if(tick)
             {
                 System.out.println(startY);

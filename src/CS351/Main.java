@@ -61,7 +61,7 @@ public class Main extends Application{
     private static final double CAMERA_FAR_CLIP = 10000.0;
     /**Initial rotation speed camera. From Molecule.java*/
     private static final double ROTATION_SPEED = 2.0;
-
+    /**Number of threads to split the animation.*/
     private static final int THREAD_COUNT = 6;
 
     /**This will store the lower bound of neighbors at which a cell dies*/
@@ -95,7 +95,7 @@ public class Main extends Application{
     private ArrayList<Cell> dyingCells = new ArrayList<>();
     /**Main scene for the simulation*/
     private Scene simulationScene;
-
+    /**Array of CellWorker threads*/
     private CellWorker[] workers = new CellWorker[THREAD_COUNT];
 
 
@@ -457,7 +457,7 @@ public class Main extends Application{
             {
                 worker.secondTick();
             }
-            adjustCells();
+            //adjustCells();
 
             /*This is code taken from the molecule project but adapted to turn
               without mouse input. */

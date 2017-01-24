@@ -93,6 +93,8 @@ public class Main extends Application{
     /**Main scene for the simulation*/
     private Scene simulationScene;
 
+
+
     /**
      * This function was from the Molecule.java project in the last lab and was not authored by me.
      */
@@ -387,7 +389,7 @@ public class Main extends Application{
         simulationScene.setFill(Color.BLACK);
         simulationScene.addEventHandler(KeyEvent.KEY_PRESSED, (keyboard));
         this.primaryStage = primaryStage;
-        primaryStage.setTitle("Molecule Sample Application");
+        primaryStage.setTitle("3D Game of Life");
         Scene startScene = gui.createStartScene();
         primaryStage.setScene(startScene);
         primaryStage.show();

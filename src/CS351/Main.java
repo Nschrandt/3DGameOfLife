@@ -133,7 +133,7 @@ public class Main extends Application{
                 for(int k = 1; k < 31; k++)
                 {
                     if(random.nextInt(100) > 96){
-                        Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                        Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
                         cellGrid[i][j][k] = newCell;
                         newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
@@ -158,7 +158,7 @@ public class Main extends Application{
             {
                 for(int k = 1; k < 31; k++)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
                     cellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -185,7 +185,7 @@ public class Main extends Application{
             {
                 for(int k = 1; k < 31; k+=9)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
                     cellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -212,13 +212,13 @@ public class Main extends Application{
             {
                 for(int k = 1; k < 31; k+=12)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
                     cellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
                     cellXform.getChildren().add(newCell);
 
-                    Cell newCell2 = new Cell(cellWidth,cellHeight,cellDepth);
+                    Cell newCell2 = new Cell(cellWidth,cellHeight,cellDepth,k);
                     cellGrid[i+1][j+1][k+1] = newCell2;
                     newCell2.setTranslate(i * cellWidth - (15 * cellWidth)+1, j * cellHeight - (15 * cellHeight)+1,
                             k * cellDepth - (15 * cellDepth)+1);
@@ -245,7 +245,7 @@ public class Main extends Application{
             {
                 for(int k = 15; k < 17; k++)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
                     cellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -260,7 +260,7 @@ public class Main extends Application{
             {
                 for(int k = 15; k < 17; k++)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
                     cellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -287,7 +287,7 @@ public class Main extends Application{
             {
                 for(int k = 14; k < 21; k+=2)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth, k);
                     cellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -457,7 +457,7 @@ public class Main extends Application{
             {
                 worker.secondTick();
             }
-            //adjustCells();
+            adjustCells();
 
             /*This is code taken from the molecule project but adapted to turn
               without mouse input. */
@@ -521,7 +521,7 @@ public class Main extends Application{
                        int neighbors = checkSurroundings(i,j,k);
                        if(cellGrid[i][j][k] == null && neighbors <= lifePopHigh && neighbors >= lifePopLow)
                        {
-                           Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
+                           Cell newCell = new Cell(cellWidth,cellHeight,cellDepth, k);
                            newCellGrid[i][j][k] = newCell;
                            newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                    k * cellDepth - (15 * cellDepth));

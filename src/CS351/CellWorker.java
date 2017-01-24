@@ -15,8 +15,6 @@ public class CellWorker extends Thread {
     private Xform cellXform;
     private ArrayList<Cell> livingCells = new ArrayList<>();
     private ArrayList<Cell> dyingCells = new ArrayList<>();
-    private ArrayList<Cell> livingMasterList;
-    private ArrayList<Cell> dyingMasterList;
 
     public CellWorker(int start, int end)
     {
@@ -41,7 +39,7 @@ public class CellWorker extends Thread {
             }
             if(tick)
             {
-                animateCells();
+                //animateCells();
                 tick = false;
             }
             try{
@@ -52,15 +50,13 @@ public class CellWorker extends Thread {
         }
     }
 
-    private void makeLocalList(ArrayList<Cell> masterList, ArrayList<Cell> localList)
+    private boolean checkCell(Cell cell)
     {
-        for(Cell cell : masterList)
+        if(cell.getY() >= startY && cell.getY() <= endY)
         {
-            if(cell.getTranslateY() <= endY && cell.getTranslateY() >= startY)
-            {
-                localList.add(cell);
-            }
+            return true;
         }
+        return false;
     }
 
     private void animateCells()
@@ -69,14 +65,14 @@ public class CellWorker extends Thread {
         ArrayList<Cell> dyingRemovals = new ArrayList<>();
         for(Cell cell : livingCells)
         {
-            if(cell.live() >= 60)
+            if(checkCell(cell) && cell.live() >= 60)
             {
                 livingRemovals.add(cell);
             }
         }
         for(Cell cell : dyingCells)
         {
-            if(cell.die() <= 0)
+            if(checkCell(cell) && cell.die() <= 0)
             {
                 cellXform.getChildren().remove(cell);
                 dyingRemovals.add(cell);
@@ -96,10 +92,8 @@ public class CellWorker extends Thread {
     {
         this.cellGrid = grid;
         this.cellXform = cellXform;
-        livingMasterList = livingList;
-        dyingMasterList = dyingList;
-        makeLocalList(livingMasterList,livingCells);
-        makeLocalList(dyingMasterList, dyingCells);
+        livingCells = livingList;
+        dyingCells = dyingList;
     }
 
     public void secondTick()
@@ -110,15 +104,5 @@ public class CellWorker extends Thread {
     public void stopRunning()
     {
         this.isRunning = false;
-    }
-
-    public static void main(String[] args)
-    {
-        Cell[] cells = new Cell[10];
-        for(int i = 0; i < 10; i ++)
-        {
-            Cell newCell = new Cell(1,1,1);
-            cells[i] = newCell;
-        }
     }
 }

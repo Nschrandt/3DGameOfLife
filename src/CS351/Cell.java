@@ -22,6 +22,8 @@ public class Cell extends Xform{
     /**Material used to coat the cells as they die*/
     private PhongMaterial dyingColor = new PhongMaterial();
 
+    private int y;
+
     /**
      * This is the Constructor for the Cell class. It creates a Box and adds the box to itself, as well as sets its
      * default color.
@@ -31,13 +33,14 @@ public class Cell extends Xform{
      *
 
      */
-    public Cell(double boxWidth, double boxHeight, double boxDepth)
+    public Cell(double boxWidth, double boxHeight, double boxDepth, int y)
     {
         cellBox = new Box(boxWidth,boxHeight,boxDepth);
         this.getChildren().add(cellBox);
         livingColor.setSpecularColor(Color.GREEN);
         livingColor.setDiffuseColor(Color.GREEN);
         cellBox.setMaterial(livingColor);
+        this.y = y;
     }
 
     /**
@@ -82,6 +85,11 @@ public class Cell extends Xform{
        {
            livingColor.setDiffuseColor(Color.DARKGREEN);
        }
+   }
+
+   public int getY()
+   {
+       return y;
    }
 
     /**

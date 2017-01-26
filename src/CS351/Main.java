@@ -5,7 +5,6 @@ import javafx.application.Application;
 import javafx.scene.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Random;
@@ -76,9 +75,13 @@ public class Main extends Application{
     /**Primary stage for the class*/
     private Stage primaryStage;
     /**3D grid of Cells that make up the animation space.*/
-    private Cell[][][] cellGrid = new Cell[32][32][32];
+    private Cell[][][] currentCellGrid = new Cell[32][32][32];
+
+    private Cell[][][] nextCellGrid = new Cell[32][32][32];
     /**Xform that holds all of the graphical elements from the grid*/
-    private Xform cellXform;
+    private Xform currentCellXform;
+
+    private Xform nextCellXform;
     /**time variable used to measure the Animation timing*/
     private long time;
     /**Random number generator used to populate a random grid*/
@@ -121,8 +124,8 @@ public class Main extends Application{
     /**
      *
      * This function creates a random grid. In each Cell location there is a 4% chance that a Cell will populate that
-     * space. If this happens, the cell is added to the cellGrid and its translate is set. It's then added to the
-     * cellXform to be displayed. At the end, the cellXform is added to the world.
+     * space. If this happens, the cell is added to the currentCellGrid and its translate is set. It's then added to the
+     * currentCellXform to be displayed. At the end, the currentCellXform is added to the world.
      */
     private void buildRandomGrid()
     {
@@ -134,15 +137,15 @@ public class Main extends Application{
                 {
                     if(random.nextInt(100) > 96){
                         Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
-                        cellGrid[i][j][k] = newCell;
+                        currentCellGrid[i][j][k] = newCell;
                         newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
-                        cellXform.getChildren().add(newCell);
+                        currentCellXform.getChildren().add(newCell);
                     }
                 }
             }
         }
-        world.getChildren().add(cellXform);
+        world.getChildren().add(currentCellXform);
     }
 
     /**
@@ -159,10 +162,10 @@ public class Main extends Application{
                 for(int k = 1; k < 31; k++)
                 {
                     Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
-                    cellGrid[i][j][k] = newCell;
+                    currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
-                    cellXform.getChildren().add(newCell);
+                    currentCellXform.getChildren().add(newCell);
                 }
             }
         }
@@ -170,7 +173,7 @@ public class Main extends Application{
         deathPopHigh = 9;
         lifePopLow = 5;
         lifePopHigh = 7;
-        world.getChildren().add(cellXform);
+        world.getChildren().add(currentCellXform);
     }
 
     /**
@@ -186,10 +189,10 @@ public class Main extends Application{
                 for(int k = 1; k < 31; k+=9)
                 {
                     Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
-                    cellGrid[i][j][k] = newCell;
+                    currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
-                    cellXform.getChildren().add(newCell);
+                    currentCellXform.getChildren().add(newCell);
                 }
             }
         }
@@ -197,7 +200,7 @@ public class Main extends Application{
         deathPopHigh = 4;
         lifePopLow = 2;
         lifePopHigh = 2;
-        world.getChildren().add(cellXform);
+        world.getChildren().add(currentCellXform);
     }
 
     /**
@@ -213,16 +216,16 @@ public class Main extends Application{
                 for(int k = 1; k < 31; k+=12)
                 {
                     Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
-                    cellGrid[i][j][k] = newCell;
+                    currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
-                    cellXform.getChildren().add(newCell);
+                    currentCellXform.getChildren().add(newCell);
 
                     Cell newCell2 = new Cell(cellWidth,cellHeight,cellDepth,k);
-                    cellGrid[i+1][j+1][k+1] = newCell2;
+                    currentCellGrid[i+1][j+1][k+1] = newCell2;
                     newCell2.setTranslate(i * cellWidth - (15 * cellWidth)+1, j * cellHeight - (15 * cellHeight)+1,
                             k * cellDepth - (15 * cellDepth)+1);
-                    cellXform.getChildren().add(newCell2);
+                    currentCellXform.getChildren().add(newCell2);
                 }
             }
         }
@@ -230,7 +233,7 @@ public class Main extends Application{
         deathPopHigh = 1;
         lifePopLow = 1;
         lifePopHigh = 1;
-        world.getChildren().add(cellXform);
+        world.getChildren().add(currentCellXform);
     }
 
     /**
@@ -246,10 +249,10 @@ public class Main extends Application{
                 for(int k = 15; k < 17; k++)
                 {
                     Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
-                    cellGrid[i][j][k] = newCell;
+                    currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
-                    cellXform.getChildren().add(newCell);
+                    currentCellXform.getChildren().add(newCell);
                 }
             }
         }
@@ -261,10 +264,10 @@ public class Main extends Application{
                 for(int k = 15; k < 17; k++)
                 {
                     Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
-                    cellGrid[i][j][k] = newCell;
+                    currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
-                    cellXform.getChildren().add(newCell);
+                    currentCellXform.getChildren().add(newCell);
                 }
             }
         }
@@ -272,7 +275,7 @@ public class Main extends Application{
         deathPopHigh = 4;
         lifePopLow = 2;
         lifePopHigh = 3;
-        world.getChildren().add(cellXform);
+        world.getChildren().add(currentCellXform);
     }
 
     /**
@@ -288,10 +291,10 @@ public class Main extends Application{
                 for(int k = 14; k < 21; k+=2)
                 {
                     Cell newCell = new Cell(cellWidth,cellHeight,cellDepth, k);
-                    cellGrid[i][j][k] = newCell;
+                    currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
-                    cellXform.getChildren().add(newCell);
+                    currentCellXform.getChildren().add(newCell);
                 }
             }
         }
@@ -299,7 +302,7 @@ public class Main extends Application{
         deathPopHigh = 3;
         lifePopLow = 4;
         lifePopHigh = 4;
-        world.getChildren().add(cellXform);
+        world.getChildren().add(currentCellXform);
     }
 
     /**
@@ -323,8 +326,8 @@ public class Main extends Application{
      */
     protected void startSimulation(int selection)
     {
-        setUpThreads();
-        cellXform = new Xform();
+        currentCellXform = new Xform();
+        nextCellXform = new Xform();
         switch (selection)
         {
             case 1:
@@ -347,6 +350,7 @@ public class Main extends Application{
                 buildPreset5();
                 break;
         }
+        setUpThreads();
         primaryStage.setScene(simulationScene);
         primaryStage.show();
         simulationScene.setCamera(camera);
@@ -370,9 +374,9 @@ public class Main extends Application{
             worker.stopRunning();
         }
         primaryStage.setScene(gui.createStartScene());
-        world.getChildren().remove(cellXform);
-        cellXform = null;
-        cellGrid = new Cell[32][32][32];
+        world.getChildren().remove(currentCellXform);
+        currentCellXform = null;
+        currentCellGrid = new Cell[32][32][32];
     }
 
     /**
@@ -409,13 +413,27 @@ public class Main extends Application{
         primaryStage.show();
     }
 
+    public void addLiving(Cell cell)
+    {
+        synchronized (livingCells) {
+            livingCells.add(cell);
+        }
+    }
+
+    public void addDying(Cell cell)
+    {
+        synchronized (dyingCells) {
+            dyingCells.add(cell);
+        }
+    }
+
     private void setUpThreads()
     {
         for(int i = 1; i <= 30; i+=(30/THREAD_COUNT))
         {
-            CellWorker newWorker = new CellWorker(i, i + (30/THREAD_COUNT-1));
+            CellWorker newWorker = new CellWorker(this, i, i + (30/THREAD_COUNT-1), deathPopLow, deathPopHigh, lifePopLow, lifePopHigh);
             newWorker.setDaemon(true);
-            newWorker.gridUpdated(cellGrid, cellXform);
+            newWorker.gridUpdated(currentCellGrid, nextCellGrid, nextCellXform);
             workers[i/(30/THREAD_COUNT)] = newWorker;
         }
     }
@@ -429,7 +447,7 @@ public class Main extends Application{
 
         /**
          * * This is the override for the handle method, which is called every frame. The first thing it does is check to
-         * see if a second has passed. If so, it updates the cellGrid and cellXform and resets the time variable.
+         * see if a second has passed. If so, it updates the currentCellGrid and currentCellXform and resets the time variable.
          *
          * It also calls the adjustCells method each frame, which controls the animation for the cells living and dying.
          *
@@ -441,24 +459,23 @@ public class Main extends Application{
          */
         @Override
         public void handle(long now) {
-            if(now - time > 1_000_000_000)
+            adjustCells();
+            if(now - time > 1_000_000_000 && areThreadsReady())
             {
-
-                world.getChildren().remove(cellXform);
-                cellXform = updateGrid();
-                world.getChildren().add(cellXform);
+                updateXform();
+                world.getChildren().remove(currentCellXform);
+//                currentCellXform = updateXform();
+                world.getChildren().add(nextCellXform);
+                currentCellXform = nextCellXform;
+                currentCellGrid = nextCellGrid;
+                nextCellGrid = new Cell[32][32][32];
+                nextCellXform = new Xform();
                 time = System.nanoTime();
                 for(CellWorker worker : workers)
                 {
-                    worker.gridUpdated(cellGrid,cellXform);
+                    worker.gridUpdated(currentCellGrid,nextCellGrid, nextCellXform);
                 }
             }
-
-            for(CellWorker worker : workers)
-            {
-                worker.secondTick();
-            }
-            adjustCells();
 
             /*This is code taken from the molecule project but adapted to turn
               without mouse input. */
@@ -467,6 +484,19 @@ public class Main extends Application{
                     modifier*ROTATION_SPEED);
             cameraXform.rx.setAngle(cameraXform.rx.getAngle() +
                     modifier*ROTATION_SPEED);
+        }
+
+        private boolean areThreadsReady()
+        {
+            for(CellWorker worker : workers)
+            {
+                if(!worker.isReady())
+                {
+                    return false;
+                }
+            }
+            System.out.println("All threads ready");
+            return true;
         }
 
         /**
@@ -497,7 +527,7 @@ public class Main extends Application{
          * a cell, a new cell is created and placed in a new copy of the grid and a new copy of the Xform. It's also
          * added to a list of livingCells so that it can be animated.
          *
-         * It also checks if a cell needs to die. If so, it removes it from the copy of the cellGrid and adds it to
+         * It also checks if a cell needs to die. If so, it removes it from the copy of the currentCellGrid and adds it to
          * the dying list so it can be animated. It does not remove it from the Xform, as it will need to finish its
          * animation.
          *
@@ -506,45 +536,33 @@ public class Main extends Application{
          *
          *
          */
-        private Xform updateGrid()
+        private void updateXform()
         {
-            PhongMaterial greenMaterial = new PhongMaterial();
-            greenMaterial.setDiffuseColor(Color.GREEN);
-            greenMaterial.setSpecularColor(Color.DARKGREEN);
-            Xform newCellXForm = new Xform();
-            Cell[][][] newCellGrid = new Cell[32][32][32];
             for(int i = 1; i<31; i++)
             {
                 for(int j = 1; j < 31; j++)
                 {
                     for(int k = 1; k < 31; k++)
                     {
-                       int neighbors = checkSurroundings(i,j,k);
-                       if(cellGrid[i][j][k] == null && neighbors <= lifePopHigh && neighbors >= lifePopLow)
+                       Cell oldCell = currentCellGrid[i][j][k];
+                       Cell newCell = nextCellGrid[i][j][k];
+                       if(newCell != null && oldCell != null)
                        {
-                           Cell newCell = new Cell(cellWidth,cellHeight,cellDepth, k);
-                           newCellGrid[i][j][k] = newCell;
-                           newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
-                                   k * cellDepth - (15 * cellDepth));
-                           newCellXForm.getChildren().add(newCell);
+                           nextCellXform.getChildren().add(newCell);
+                       }
+                       else if(newCell != null && oldCell == null)
+                       {
+                           nextCellXform.getChildren().add(newCell);
                            livingCells.add(newCell);
                        }
-                       else if(cellGrid[i][j][k] != null && (neighbors < deathPopLow || neighbors > deathPopHigh))
+                       else if(newCell == null && oldCell != null)
                        {
-                           newCellXForm.getChildren().add(cellGrid[i][j][k]);
-                           dyingCells.add(cellGrid[i][j][k]);
-                           newCellGrid[i][j][k] = null;
-                       }
-                       else if(cellGrid[i][j][k] != null && !(neighbors < deathPopLow || neighbors > deathPopHigh))
-                       {
-                           newCellXForm.getChildren().add(cellGrid[i][j][k]);
-                           newCellGrid[i][j][k] = cellGrid[i][j][k];
+                           nextCellXform.getChildren().add(oldCell);
+                           dyingCells.add(oldCell);
                        }
                     }
                 }
             }
-            cellGrid = newCellGrid;
-            return newCellXForm;
         }
 
         /**
@@ -560,27 +578,21 @@ public class Main extends Application{
         {
             ArrayList<Cell> livingRemovals = new ArrayList<>();
             ArrayList<Cell> dyingRemovals = new ArrayList<>();
-            for(Cell cell : livingCells)
-            {
-                if(cell.live() >= 60)
-                {
+            for (Cell cell : livingCells) {
+                if (cell.live() >= 60) {
                     livingRemovals.add(cell);
                 }
             }
-            for(Cell cell : dyingCells)
-            {
-                if(cell.die() <= 0)
-                {
-                    cellXform.getChildren().remove(cell);
+            for (Cell cell : dyingCells) {
+                if (cell.die() <= 0) {
+                    currentCellXform.getChildren().remove(cell);
                     dyingRemovals.add(cell);
                 }
             }
-            for(Cell cell: livingRemovals)
-            {
+            for (Cell cell : livingRemovals) {
                 livingCells.remove(cell);
             }
-            for(Cell cell: dyingRemovals)
-            {
+            for (Cell cell : dyingRemovals) {
                 dyingCells.remove(cell);
             }
         }
@@ -604,7 +616,7 @@ public class Main extends Application{
                 {
                     for(int k = z-1; k<z+2; k++)
                     {
-                        if(cellGrid[i][j][k] != null && !(i == x && j == y && k ==z))
+                        if(currentCellGrid[i][j][k] != null && !(i == x && j == y && k ==z))
                         {
                             neighbors++;
                         }

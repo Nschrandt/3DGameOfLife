@@ -74,13 +74,13 @@ public class Main extends Application{
 
     /**Primary stage for the class*/
     private Stage primaryStage;
-    /**3D grid of Cells that make up the animation space.*/
+    /**3D grid of Cells that is used to build the animation space.*/
     private Cell[][][] currentCellGrid = new Cell[32][32][32];
-
+    /**Next cell grid to be updated by the CellWorker Threads*/
     private Cell[][][] nextCellGrid = new Cell[32][32][32];
     /**Xform that holds all of the graphical elements from the grid*/
     private Xform currentCellXform;
-
+    /**Next Xform to hold the graphical elements from the next grid.*/
     private Xform nextCellXform;
     /**time variable used to measure the Animation timing*/
     private long time;
@@ -135,8 +135,8 @@ public class Main extends Application{
             {
                 for(int k = 1; k < 31; k++)
                 {
-                    if(random.nextInt(100) > 96){
-                        Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
+                    if(random.nextInt(100) > 97){
+                        Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                         currentCellGrid[i][j][k] = newCell;
                         newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                                 k * cellDepth - (15 * cellDepth));
@@ -161,7 +161,7 @@ public class Main extends Application{
             {
                 for(int k = 1; k < 31; k++)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                     currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -188,7 +188,7 @@ public class Main extends Application{
             {
                 for(int k = 1; k < 31; k+=9)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                     currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -215,13 +215,13 @@ public class Main extends Application{
             {
                 for(int k = 1; k < 31; k+=12)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                     currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
                     currentCellXform.getChildren().add(newCell);
 
-                    Cell newCell2 = new Cell(cellWidth,cellHeight,cellDepth,k);
+                    Cell newCell2 = new Cell(cellWidth,cellHeight,cellDepth);
                     currentCellGrid[i+1][j+1][k+1] = newCell2;
                     newCell2.setTranslate(i * cellWidth - (15 * cellWidth)+1, j * cellHeight - (15 * cellHeight)+1,
                             k * cellDepth - (15 * cellDepth)+1);
@@ -248,7 +248,7 @@ public class Main extends Application{
             {
                 for(int k = 15; k < 17; k++)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                     currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -256,14 +256,13 @@ public class Main extends Application{
                 }
             }
         }
-
         for(int i = 15; i < 17; i++)
         {
             for(int j = 1; j < 31; j++)
             {
                 for(int k = 15; k < 17; k++)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth,k);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                     currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -280,7 +279,7 @@ public class Main extends Application{
 
     /**
      *
-     * FIfth preset method. Behaves the same as the previous.
+     * Fifth preset method. Behaves the same as the previous.
      */
     private void buildPreset5()
     {
@@ -290,7 +289,7 @@ public class Main extends Application{
             {
                 for(int k = 14; k < 21; k+=2)
                 {
-                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth, k);
+                    Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                     currentCellGrid[i][j][k] = newCell;
                     newCell.setTranslate(i * cellWidth - (15 * cellWidth), j * cellHeight - (15 * cellHeight),
                             k * cellDepth - (15 * cellDepth));
@@ -365,7 +364,7 @@ public class Main extends Application{
     /**
      *
      * Function called by the KeyboardController when the reset button is pressed. It stops the AnimationTimer,
-     * resets the scene to the GUI start screne, and resets the fields so that a new simulation can begin.
+     * resets the scene to the GUI start screen, and resets the fields so that a new simulation can begin.
      */
     protected void stopSimulation(){
         timer.stop();
@@ -377,6 +376,7 @@ public class Main extends Application{
         world.getChildren().remove(currentCellXform);
         currentCellXform = null;
         currentCellGrid = new Cell[32][32][32];
+        nextCellGrid = new Cell[32][32][32];
     }
 
     /**
@@ -413,32 +413,21 @@ public class Main extends Application{
         primaryStage.show();
     }
 
-    public void addLiving(Cell cell)
-    {
-        synchronized (livingCells) {
-            livingCells.add(cell);
-        }
-    }
-
-    public void addDying(Cell cell)
-    {
-        synchronized (dyingCells) {
-            dyingCells.add(cell);
-        }
-    }
-
+    /*
+    This method sets up the CellWorker threads and passes them the first cell grid.
+     */
     private void setUpThreads()
     {
         for(int i = 1; i <= 30; i+=(30/THREAD_COUNT))
         {
-            CellWorker newWorker = new CellWorker(this, i, i + (30/THREAD_COUNT-1), deathPopLow, deathPopHigh, lifePopLow, lifePopHigh);
+            CellWorker newWorker = new CellWorker(i, i + (30/THREAD_COUNT-1), deathPopLow, deathPopHigh, lifePopLow, lifePopHigh);
             newWorker.setDaemon(true);
-            newWorker.gridUpdated(currentCellGrid, nextCellGrid, nextCellXform);
+            newWorker.gridUpdated(currentCellGrid, nextCellGrid);
             workers[i/(30/THREAD_COUNT)] = newWorker;
         }
     }
 
-    /**
+    /*
      *
      * This is a member class for the Main class that extends AnimationTImer and serves as the main timer for the
      * simulation.
@@ -447,7 +436,9 @@ public class Main extends Application{
 
         /**
          * * This is the override for the handle method, which is called every frame. The first thing it does is check to
-         * see if a second has passed. If so, it updates the currentCellGrid and currentCellXform and resets the time variable.
+         * see if a second has passed and if the threads have finished processing the new grid. If so, it uses the new
+         * grid to update the next Xform and swaps it in. It then resets the next grid and Xform and passes them to the
+         * threads to begin working on the next update.
          *
          * It also calls the adjustCells method each frame, which controls the animation for the cells living and dying.
          *
@@ -459,12 +450,10 @@ public class Main extends Application{
          */
         @Override
         public void handle(long now) {
-            adjustCells();
             if(now - time > 1_000_000_000 && areThreadsReady())
             {
                 updateXform();
                 world.getChildren().remove(currentCellXform);
-//                currentCellXform = updateXform();
                 world.getChildren().add(nextCellXform);
                 currentCellXform = nextCellXform;
                 currentCellGrid = nextCellGrid;
@@ -473,9 +462,10 @@ public class Main extends Application{
                 time = System.nanoTime();
                 for(CellWorker worker : workers)
                 {
-                    worker.gridUpdated(currentCellGrid,nextCellGrid, nextCellXform);
+                    worker.gridUpdated(currentCellGrid,nextCellGrid);
                 }
             }
+            adjustCells();
 
             /*This is code taken from the molecule project but adapted to turn
               without mouse input. */
@@ -486,6 +476,10 @@ public class Main extends Application{
                     modifier*ROTATION_SPEED);
         }
 
+        /*
+        This method checks to see if all of the CellWorker threads have finished updating their assigned section of
+        the grid.
+         */
         private boolean areThreadsReady()
         {
             for(CellWorker worker : workers)
@@ -495,11 +489,10 @@ public class Main extends Application{
                     return false;
                 }
             }
-            System.out.println("All threads ready");
             return true;
         }
 
-        /**
+        /*
          * This method is called from the Main when it receives the event from the KeyboardController class. It
          * zooms the camera either in or out, depending on the key pressed. The zoom is bounded.
          * @param direction direction in which the camera will zoom.
@@ -521,19 +514,12 @@ public class Main extends Application{
             }
         }
 
-        /**
-         * This method is called every second. It loops through the 3D grid and checks every position against the
-         * parameters passed by the user, or stored in the preset simulation. If a space has enough nieghbors to become
-         * a cell, a new cell is created and placed in a new copy of the grid and a new copy of the Xform. It's also
-         * added to a list of livingCells so that it can be animated.
-         *
-         * It also checks if a cell needs to die. If so, it removes it from the copy of the currentCellGrid and adds it to
-         * the dying list so it can be animated. It does not remove it from the Xform, as it will need to finish its
-         * animation.
-         *
-         * Finally if a cell doesn't need to die or come to life, it is simply copied into the new grid and Xform.
-         * @return returns a new Xform with the updated Cells
-         *
+        /*
+         * This method uses the new grid given to the main thread by the worker threads to update the next Xform. If the
+         * cell exists in both the old and new grids, it is simply added to the new Xform. If it exists in the new one,
+         * but not the old one, it is added to the Xform and the livingCells list, so it can be animated. If it exists
+         * in the old one but not the new one, it is still added to the Xform, as well as the dyingCells list so it can
+         * be animated and removed.
          *
          */
         private void updateXform()
@@ -565,7 +551,7 @@ public class Main extends Application{
             }
         }
 
-        /**
+        /*
          *
          * This is the method that controls the animation of the cells as they come to life or die. It loops through
          * the livingCells and dyingCells lists and calls the Cell.live() or Cell.die() methods respectively. If either
@@ -596,39 +582,10 @@ public class Main extends Application{
                 dyingCells.remove(cell);
             }
         }
-
-        /**
-         * This method is called to check how many neighbors it has so it can be checked against the parameters for the
-         * simulation. It will not count itself.
-         *
-         * @param x x value in the 3D cell grid
-         * @param y y value in the 3D cell grid
-         * @param z z value in the 3D cell grid
-         * @return number of beighbors around the given space.
-         *
-         */
-        private int checkSurroundings(int x, int y, int z)
-        {
-            int neighbors = 0;
-            for(int i = x-1; i < x+2; i++)
-            {
-                for(int j = y-1; j<y+2; j++)
-                {
-                    for(int k = z-1; k<z+2; k++)
-                    {
-                        if(currentCellGrid[i][j][k] != null && !(i == x && j == y && k ==z))
-                        {
-                            neighbors++;
-                        }
-                    }
-                }
-            }
-            return neighbors;
-        }
     }
 
     /**
-     * main method.
+     * main method. Simply launches the program.
      * @param args command line args
      */
     public static void main(String[] args)

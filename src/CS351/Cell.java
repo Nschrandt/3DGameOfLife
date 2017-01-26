@@ -22,8 +22,6 @@ public class Cell extends Xform{
     /**Material used to coat the cells as they die*/
     private PhongMaterial dyingColor = new PhongMaterial();
 
-    private int y;
-
     /**
      * This is the Constructor for the Cell class. It creates a Box and adds the box to itself, as well as sets its
      * default color.
@@ -31,16 +29,14 @@ public class Cell extends Xform{
      * @param boxHeight height of the cell
      * @param boxDepth depth of the cell
      *
-
      */
-    public Cell(double boxWidth, double boxHeight, double boxDepth, int y)
+    public Cell(double boxWidth, double boxHeight, double boxDepth)
     {
         cellBox = new Box(boxWidth,boxHeight,boxDepth);
         this.getChildren().add(cellBox);
         livingColor.setSpecularColor(Color.GREEN);
         livingColor.setDiffuseColor(Color.GREEN);
         cellBox.setMaterial(livingColor);
-        this.y = y;
     }
 
     /**
@@ -64,32 +60,18 @@ public class Cell extends Xform{
      * This method changes the diffuse color of the living material based on the current state of animation of the
      * cell.
      */
-   private void setLiveColor(){
-       if(liveTimer < 20)
-       {
+   private void setLiveColor() {
+       if (liveTimer < 20) {
            livingColor.setDiffuseColor(Color.LIGHTGREEN);
-       }
-       else if(liveTimer < 30)
-       {
+       } else if (liveTimer < 30) {
            livingColor.setDiffuseColor(Color.LIMEGREEN);
-       }
-       else if(liveTimer < 40)
-       {
+       } else if (liveTimer < 40) {
            livingColor.setDiffuseColor(Color.GREEN);
-       }
-       else if(liveTimer < 50)
-       {
+       } else if (liveTimer < 50) {
            livingColor.setDiffuseColor(Color.FORESTGREEN);
-       }
-       else
-       {
+       } else {
            livingColor.setDiffuseColor(Color.DARKGREEN);
        }
-   }
-
-   public int getY()
-   {
-       return y;
    }
 
     /**

@@ -11,10 +11,9 @@ public class CellWorker extends Thread {
     private Cell[][][] cellGrid;
     private boolean isRunning;
     private boolean isPaused = false;
+    private boolean isReady = false;
     private boolean tick = false;
     private Xform cellXform;
-    private ArrayList<Cell> livingCells = new ArrayList<>();
-    private ArrayList<Cell> dyingCells = new ArrayList<>();
 
     public CellWorker(int start, int end)
     {
@@ -37,10 +36,10 @@ public class CellWorker extends Thread {
                     e.printStackTrace();
                 }
             }
-            if(tick)
+            if(!isReady)
             {
-                //animateCells();
-                tick = false;
+                System.out.println("THIS");
+                isReady = true;
             }
             try{
                 sleep(10);
@@ -59,41 +58,12 @@ public class CellWorker extends Thread {
         return false;
     }
 
-    private void animateCells()
-    {
-        ArrayList<Cell> livingRemovals = new ArrayList<>();
-        ArrayList<Cell> dyingRemovals = new ArrayList<>();
-        for(Cell cell : livingCells)
-        {
-            if(checkCell(cell) && cell.live() >= 60)
-            {
-                livingRemovals.add(cell);
-            }
-        }
-        for(Cell cell : dyingCells)
-        {
-            if(checkCell(cell) && cell.die() <= 0)
-            {
-                cellXform.getChildren().remove(cell);
-                dyingRemovals.add(cell);
-            }
-        }
-        for(Cell cell: livingRemovals)
-        {
-            livingCells.remove(cell);
-        }
-        for(Cell cell: dyingRemovals)
-        {
-            dyingCells.remove(cell);
-        }
-    }
 
-    public void gridUpdated(Cell[][][] grid, Xform cellXform, ArrayList<Cell> livingList, ArrayList<Cell> dyingList)
+    public void gridUpdated(Cell[][][] grid, Xform cellXform)
     {
         this.cellGrid = grid;
-        this.cellXform = cellXform;
-        livingCells = livingList;
-        dyingCells = dyingList;
+        isReady = false;
+        //this.cellXform = cellXform;
     }
 
     public void secondTick()

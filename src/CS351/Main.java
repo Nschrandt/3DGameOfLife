@@ -62,7 +62,7 @@ public class Main extends Application{
     /**Initial rotation speed camera. From Molecule.java*/
     private static final double ROTATION_SPEED = 2.0;
     /**Number of threads to split the animation.*/
-    private static final int THREAD_COUNT = 6;
+    private static final int THREAD_COUNT = 3;
 
     /**This will store the lower bound of neighbors at which a cell dies*/
     private double deathPopLow;
@@ -415,7 +415,7 @@ public class Main extends Application{
         {
             CellWorker newWorker = new CellWorker(i, i + (30/THREAD_COUNT-1));
             newWorker.setDaemon(true);
-            newWorker.gridUpdated(cellGrid, cellXform, livingCells, dyingCells);
+            newWorker.gridUpdated(cellGrid, cellXform);
             workers[i/(30/THREAD_COUNT)] = newWorker;
         }
     }
@@ -443,13 +443,14 @@ public class Main extends Application{
         public void handle(long now) {
             if(now - time > 1_000_000_000)
             {
+
                 world.getChildren().remove(cellXform);
                 cellXform = updateGrid();
                 world.getChildren().add(cellXform);
                 time = System.nanoTime();
                 for(CellWorker worker : workers)
                 {
-                    worker.gridUpdated(cellGrid,cellXform,livingCells,dyingCells);
+                    worker.gridUpdated(cellGrid,cellXform);
                 }
             }
 

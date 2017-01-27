@@ -21,3 +21,9 @@ restart the simulation and return to the start screen.
 Citations:
 The Main.java class was originally the Molecule.java class from the previous project, but heavily altered. Most of what
 remains is the camera functionality and creation.
+
+Future Plans:
+Make main menu AI prettier
+Continue to increase user controls such as:
+    *Button to take a single step in the simulation.
+    *Rotation controls

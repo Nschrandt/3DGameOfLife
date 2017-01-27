@@ -40,10 +40,10 @@ public class GUI
     ToolBar toolBar;
 
     /**Combo boxes*/
-    ComboBox lowDeath;
-    ComboBox highDeath;
-    ComboBox lowLife;
-    ComboBox highLife;
+    private ComboBox lowDeath;
+    private ComboBox highDeath;
+    private ComboBox lowLife;
+    private ComboBox highLife;
 
     /**
      * Constructor method. Sets the source object that created it.

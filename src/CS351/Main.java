@@ -3,7 +3,10 @@ package CS351;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.util.ArrayList;
@@ -74,6 +77,7 @@ public class Main extends Application{
 
     /**Primary stage for the class*/
     private Stage primaryStage;
+    private BorderPane pane;
     /**3D grid of Cells that is used to build the animation space.*/
     private Cell[][][] currentCellGrid = new Cell[32][32][32];
     /**Next cell grid to be updated by the CellWorker Threads*/
@@ -97,9 +101,17 @@ public class Main extends Application{
     /**ArrayList of cells that are currently dying. Used for their animation.*/
     private ArrayList<Cell> dyingCells = new ArrayList<>();
     /**Main scene for the simulation*/
-    private Scene simulationScene;
+    private SubScene simulationScene;
+
+    private Scene mainScene;
     /**Array of CellWorker threads*/
     private CellWorker[] workers = new CellWorker[THREAD_COUNT];
+
+    private ToolBar toolBar;
+
+    private boolean isPaused = false;
+
+    private int currentSim;
 
 
 
@@ -327,35 +339,87 @@ public class Main extends Application{
     {
         currentCellXform = new Xform();
         nextCellXform = new Xform();
-        switch (selection)
-        {
-            case 1:
-                setRValues();
-                buildRandomGrid();
-                break;
-            case 2:
-                buildPreset1();
-                break;
-            case 3:
-                buildPreset2();
-                break;
-            case 4:
-                buildPreset3();
-                break;
-            case 5:
-                buildPreset4();
-                break;
-            case 6:
-                buildPreset5();
-                break;
-        }
+        chooseSimulation(selection);
+        gui.setComboBoxValues(deathPopHigh,deathPopLow,lifePopHigh,lifePopLow);
         setUpThreads();
-        primaryStage.setScene(simulationScene);
+        primaryStage.setScene(mainScene);
         primaryStage.show();
         simulationScene.setCamera(camera);
         time = System.nanoTime();
         for(CellWorker worker : workers)
         {
+            worker.start();
+        }
+        timer.start();
+    }
+
+    private void chooseSimulation(int selection) {
+        switch (selection)
+        {
+            case 1:
+                setRValues();
+                buildRandomGrid();
+                currentSim = 1;
+                break;
+            case 2:
+                buildPreset1();
+                currentSim = 2;
+                break;
+            case 3:
+                currentSim = 3;
+                buildPreset2();
+                break;
+            case 4:
+                currentSim = 4;
+                buildPreset3();
+                break;
+            case 5:
+                currentSim = 5;
+                buildPreset4();
+                break;
+            case 6:
+                currentSim = 6;
+                buildPreset5();
+                break;
+        }
+    }
+
+    protected void pauseSimulation(Button pauseButton)
+    {
+        if(!isPaused)
+        {
+            timer.stop();
+            pauseButton.setText("Resume");
+            isPaused = true;
+        }
+        else
+        {
+            timer.start();
+            pauseButton.setText("Pause Simulation");
+            isPaused = false;
+        }
+    }
+
+    protected void resetSimulation(Double lowD, Double highD, Double lowL, Double highL)
+    {
+        timer.stop();
+        for(CellWorker worker: workers)
+        {
+            worker.stopRunning();
+        }
+        world.getChildren().remove(currentCellXform);
+        currentCellXform = new Xform();
+        currentCellGrid = new Cell[32][32][32];
+        nextCellGrid = new Cell[32][32][32];
+        chooseSimulation(currentSim);
+        deathPopHigh = highD;
+        deathPopLow = lowD;
+        lifePopLow = lowL;
+        lifePopHigh = highL;
+        setUpThreads();
+        for(CellWorker worker : workers)
+        {
+            worker.setRValues(lifePopLow,lifePopHigh,deathPopLow,deathPopHigh);
             worker.start();
         }
         timer.start();
@@ -403,9 +467,14 @@ public class Main extends Application{
         root.getChildren().add(world);
         root.setDepthTest(DepthTest.ENABLE);
         buildCamera();
-        simulationScene = new Scene(root, 1024, 768, true);
+        simulationScene = new SubScene(root, 1024,768,true, SceneAntialiasing.BALANCED);
         simulationScene.setFill(Color.BLACK);
         simulationScene.addEventHandler(KeyEvent.KEY_PRESSED, (keyboard));
+        toolBar = gui.createToolBar();
+        pane = new BorderPane();
+        pane.setCenter(simulationScene);
+        pane.setTop(toolBar);
+        mainScene = new Scene(pane, 1024, 768, true);
         this.primaryStage = primaryStage;
         primaryStage.setTitle("3D Game of Life");
         Scene startScene = gui.createStartScene();

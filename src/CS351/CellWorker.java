@@ -91,6 +91,14 @@ public class CellWorker extends Thread {
         isRunning = true;
     }
 
+    public void setRValues(double lowL, double highL, double lowD, double highD)
+    {
+        lifePopLow = lowL;
+        lifePopHigh = highL;
+        deathPopHigh = highD;
+        deathPopLow = lowD;
+    }
+
     /**
      * Main run method. Checks to see if the main thread set isReady to false and then updates it's section
      * of the new grid. Otherwise, waits.

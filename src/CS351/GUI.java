@@ -1,11 +1,12 @@
 package CS351;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 /**
@@ -36,6 +37,13 @@ public class GUI
     /**Reference to the Main.java that created this GUI*/
     private Main source;
 
+    ToolBar toolBar;
+
+    ComboBox lowDeath;
+    ComboBox highDeath;
+    ComboBox lowLife;
+    ComboBox highLife;
+
     /**
      * Constructor method. Sets the source object that created it.
      * @param source the Main class that created this GUI
@@ -65,6 +73,50 @@ public class GUI
         layout.setBottom(presetWindow);
 
         return startScene;
+    }
+
+    protected ToolBar createToolBar()
+    {
+        Button pauseButton = new Button("Pause Simulation");
+        pauseButton.setOnAction(e-> source.pauseSimulation(pauseButton));
+
+        Button restartButton = new Button("Back To Main");
+        restartButton.setOnAction(e-> source.stopSimulation());
+
+        Button resetButton = new Button("Reset Simulation");
+        resetButton.setOnAction(e-> source.resetSimulation((Double)lowDeath.getValue(), (Double)highDeath.getValue(),
+                (Double)lowLife.getValue(),(Double) highLife.getValue()));
+
+        lowDeath = createComboBox();
+        highDeath = createComboBox();
+        lowLife = createComboBox();
+        highLife = createComboBox();
+
+        Label lowDeathLabel = new Label("Low Death: ");
+        Label highDeathLabel = new Label("High Death: ");
+        Label lowLifeLabel = new Label("Low Life: ");
+        Label highLifeLabel = new Label("High Life: ");
+
+        HBox leftBox = new HBox(pauseButton, restartButton, resetButton);
+
+        HBox middleBox = new HBox(lowDeathLabel,lowDeath,highDeathLabel,highDeath,lowLifeLabel,lowLife,
+                highLifeLabel,highLife);
+
+        HBox.setHgrow(leftBox, Priority.ALWAYS);
+        HBox.setHgrow(middleBox, Priority.ALWAYS);
+
+        toolBar = new ToolBar();
+        toolBar.setPadding(new Insets(10,10,10,10));
+        toolBar.getItems().addAll(leftBox, middleBox);
+        return toolBar;
+    }
+
+    protected void setComboBoxValues(double highD, double lowD, double highL, double lowL)
+    {
+        lowDeath.setValue(lowD);
+        highDeath.setValue(highD);
+        lowLife.setValue(lowL);
+        highLife.setValue(highL);
     }
 
     /**
@@ -125,6 +177,13 @@ public class GUI
         presetButtons[3].setText("The Multi-Cross");
         presetButtons[4].setText("The Eye of Zeus");
         return presetWindow;
+    }
+
+    private ComboBox createComboBox()
+    {
+        ObservableList<Double> list = FXCollections.observableArrayList(1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0);
+        ComboBox box = new ComboBox(list);
+        return box;
     }
 
     /**

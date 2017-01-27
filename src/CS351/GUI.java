@@ -36,9 +36,10 @@ public class GUI
     private Button[] presetButtons = new Button[5];
     /**Reference to the Main.java that created this GUI*/
     private Main source;
-
+    /**ToolBar that contains several simulation options that is added to the simulation window*/
     ToolBar toolBar;
 
+    /**Combo boxes*/
     ComboBox lowDeath;
     ComboBox highDeath;
     ComboBox lowLife;
@@ -75,6 +76,12 @@ public class GUI
         return startScene;
     }
 
+    /**
+     * This creates a tool bar to be placed above the simulation during runtime. It includes a pause button, to pause
+     * the simulation or resume it; a back to main menu button; and a reset button. The reset button will start the
+     * current simulation over with the values in the 4 combo boxes to the right.
+     * @return the created ToolBar
+     */
     protected ToolBar createToolBar()
     {
         Button pauseButton = new Button("Pause Simulation");
@@ -111,6 +118,13 @@ public class GUI
         return toolBar;
     }
 
+    /**
+     * This sets the values of the combo boxes when a simulation begins.
+     * @param highD high death pop
+     * @param lowD low death pop
+     * @param highL high life pop
+     * @param lowL low life pop
+     */
     protected void setComboBoxValues(double highD, double lowD, double highL, double lowL)
     {
         lowDeath.setValue(lowD);
@@ -179,6 +193,9 @@ public class GUI
         return presetWindow;
     }
 
+    /*
+    Creates a comboBox for one of the R values
+     */
     private ComboBox createComboBox()
     {
         ObservableList<Double> list = FXCollections.observableArrayList(1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0);
@@ -186,7 +203,7 @@ public class GUI
         return box;
     }
 
-    /**
+    /*
      * Method that creates and populates the window for all of the sliders as well as the instructions.
      * @return the GridPane with the sliders.
      */
@@ -231,7 +248,7 @@ public class GUI
         return window;
     }
 
-    /**
+    /*
      * Creates and sets up a slider with a lower value.
      * @return lower-value slider.
      */
@@ -247,7 +264,7 @@ public class GUI
         return newSlider;
     }
 
-    /**
+    /*
      * Creates and sets up a slider with a higher initial value.
      * @return Slider
      */
@@ -263,7 +280,7 @@ public class GUI
         return newSlider;
     }
 
-    /**
+    /*
      * This is a member class that implements and EventHandler. When any of the buttons are pressed in the GUI window,
      * it calls the startSimulation() method in the Main class with the correct parameter.
      */

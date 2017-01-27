@@ -102,15 +102,15 @@ public class Main extends Application{
     private ArrayList<Cell> dyingCells = new ArrayList<>();
     /**Main scene for the simulation*/
     private SubScene simulationScene;
-
+    /**Top layer scene that holds the simulation scene and the toolbar*/
     private Scene mainScene;
     /**Array of CellWorker threads*/
     private CellWorker[] workers = new CellWorker[THREAD_COUNT];
-
+    /**Toolbar created by the gui to alter simulation during runtime*/
     private ToolBar toolBar;
-
+    /**boolean to see if the simulation is currently paused or not*/
     private boolean isPaused = false;
-
+    /**value of the current simulation*/
     private int currentSim;
 
 
@@ -353,6 +353,9 @@ public class Main extends Application{
         timer.start();
     }
 
+    /*
+    Moved this chunk of code out of the startSimulation method so it could be used by the resetSimulation method
+     */
     private void chooseSimulation(int selection) {
         switch (selection)
         {
@@ -384,6 +387,11 @@ public class Main extends Application{
         }
     }
 
+    /**
+     * This method simply pauses the simulation if it is running, or resumes it if it is paused. Called when the
+     * pause/resume button is pressed
+     * @param pauseButton button that is pressed
+     */
     protected void pauseSimulation(Button pauseButton)
     {
         if(!isPaused)
@@ -400,6 +408,13 @@ public class Main extends Application{
         }
     }
 
+    /**
+     * Resets the current preset or random simulation but with altered R values.
+     * @param lowD low dead pop
+     * @param highD high death pop
+     * @param lowL low life pop
+     * @param highL high life pop
+     */
     protected void resetSimulation(Double lowD, Double highD, Double lowL, Double highL)
     {
         timer.stop();

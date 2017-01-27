@@ -119,7 +119,7 @@ public class GUI
             GridPane.setConstraints(newButton,i, 0);
             presetWindow.getChildren().add(newButton);
         }
-        presetButtons[0].setText("Tower of Life and Death");
+        presetButtons[0].setText("Tower of Decay");
         presetButtons[1].setText("Pillars of Creation");
         presetButtons[2].setText("The Cubic Cycle");
         presetButtons[3].setText("The Multi-Cross");

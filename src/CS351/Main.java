@@ -157,9 +157,9 @@ public class Main extends Application{
     {
         for(int i = 15; i < 17; i++)
         {
-            for(int j = 15; j < 17; j++)
+            for(int j = 1; j < 31; j++)
             {
-                for(int k = 1; k < 31; k++)
+                for(int k = 15; k < 17; k++)
                 {
                     Cell newCell = new Cell(cellWidth,cellHeight,cellDepth);
                     currentCellGrid[i][j][k] = newCell;
@@ -169,10 +169,10 @@ public class Main extends Application{
                 }
             }
         }
-        deathPopLow = 4;
-        deathPopHigh = 9;
-        lifePopLow = 5;
-        lifePopHigh = 7;
+        deathPopLow = 2;
+        deathPopHigh = 2;
+        lifePopLow = 3;
+        lifePopHigh = 3;
         world.getChildren().add(currentCellXform);
     }
 
@@ -196,8 +196,8 @@ public class Main extends Application{
                 }
             }
         }
-        deathPopLow = 1;
-        deathPopHigh = 4;
+        deathPopLow = 2;
+        deathPopHigh = 2;
         lifePopLow = 2;
         lifePopHigh = 2;
         world.getChildren().add(currentCellXform);
@@ -270,8 +270,8 @@ public class Main extends Application{
                 }
             }
         }
-        deathPopLow = 2;
-        deathPopHigh = 4;
+        deathPopLow = 5;
+        deathPopHigh = 2;
         lifePopLow = 2;
         lifePopHigh = 3;
         world.getChildren().add(currentCellXform);

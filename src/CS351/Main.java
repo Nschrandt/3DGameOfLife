@@ -64,7 +64,7 @@ public class Main extends Application{
     /**Initial rotation speed camera. From Molecule.java*/
     private static final double ROTATION_SPEED = 2.0;
     /**Number of threads to split the animation.*/
-    private static final int THREAD_COUNT = 3;
+    private static final int THREAD_COUNT = 6;
 
     /**This will store the lower bound of neighbors at which a cell dies*/
     private double deathPopLow;

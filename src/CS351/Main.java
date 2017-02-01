@@ -120,7 +120,7 @@ public class Main extends Application{
      */
     private void buildCamera()
     {
-        root.getChildren().add(cameraXform);
+        root.getChildren().add(cameraXform3);
         cameraXform.getChildren().add(cameraXform2);
         cameraXform2.getChildren().add(cameraXform3);
         cameraXform3.getChildren().add(camera);

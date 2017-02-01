@@ -173,9 +173,6 @@ public class CellWorker extends Thread {
      *
      */
     private void updateGrid() {
-        PhongMaterial greenMaterial = new PhongMaterial();
-        greenMaterial.setDiffuseColor(Color.GREEN);
-        greenMaterial.setSpecularColor(Color.DARKGREEN);
         for (int i = 1; i < 31; i++) {
             for (int j = 1; j < 31; j++) {
                 for (int k = startY; k <= endY; k++) {
